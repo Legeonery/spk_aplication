@@ -29,7 +29,7 @@ import { Plus as PlusIcon } from 'lucide-vue-next'
       >
         <img src="../../public/loader.png" alt="" />
         <span class="text-gray-500 mt-2">Наименование</span>
-        <span class="text-gray-500 mt-2">Гос.Номер</span>>
+        <span class="text-gray-500 mt-2">Гос.Номер</span>
       </router-link>
       <router-link
         to="/transport"
