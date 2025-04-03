@@ -41,7 +41,7 @@ onUnmounted(() => {
       <ul class="space-y-2">
         <li>
           <router-link
-            to="/sklad"
+            to="/warehouse"
             class="font-semibold block px-4 py-2 rounded hover:bg-gray-400 second-text-button color-src"
           >
             Склад
@@ -57,7 +57,7 @@ onUnmounted(() => {
         </li>
         <li>
           <router-link
-            to="/transport"
+            to="/staff"
             class="font-semibold block px-4 py-2 rounded hover:bg-gray-400 second-text-button color-src"
           >
             Сотрудники
@@ -65,7 +65,7 @@ onUnmounted(() => {
         </li>
         <li>
           <router-link
-            to="/transport"
+            to="/repair_facility"
             class="font-semibold block px-4 py-2 rounded hover:bg-gray-400 second-text-button color-src"
           >
             Ремонтная база

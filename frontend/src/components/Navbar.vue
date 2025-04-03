@@ -39,7 +39,7 @@ const handleSidebarToggle = (event) => {
         <ul class="py-2">
           <li>
             <router-link
-              to="/sklad"
+              to="/profile"
               class="block px-4 py-2 rounded hover:bg-gray-400 font-semibold second-text-button color-src"
             >
               Профиль
@@ -47,7 +47,7 @@ const handleSidebarToggle = (event) => {
           </li>
           <li>
             <router-link
-              to="/sklad"
+              to="/exit"
               class="block px-4 py-2 rounded hover:bg-gray-400 font-semibold second-text-button color-src"
             >
               Выйти
