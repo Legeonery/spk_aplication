@@ -1,0 +1,68 @@
+@import 'tailwindcss';
+
+#app {
+  font-weight: normal;
+  width: 100%;
+  background-color: #bdc3c7; /*Цвет основного фона*/
+  height: 100%;
+}
+html,
+body {
+  height: 100%;
+}
+/*Шрифт для заголовков и акцентных элементов*/
+.main-text-title {
+  font-family: 'Montserrat'; /*заголовки первого уровня, кнопки с важными действиями*/
+  color: #2d6a4f;
+}
+.main-text-info {
+  font-family: 'Merriweather'; /*заголовки, важные блоки информации*/
+}
+.main-text-alert {
+  font-family: 'Bebas Neue'; /*выделение кнопок, акцентных элементов, важных уведомлений*/
+}
+/*Основной шрифт для текста*/
+.second-text-title {
+  font-family: 'Roboto'; /*основной текст, заголовки второго уровня, описание и детали*/
+}
+.second-text-button {
+  font-family: 'Open Sans'; /*основной текст, кнопки, меню*/
+}
+.second-text-interface {
+  font-family: 'Lato'; /*для основного текста и интерфейсных элементов*/
+}
+/*Шрифт для вспомогательных элементов*/
+.ancillary-text {
+  font-family: 'Poppins'; /*кнопки, всплывающие уведомления, элементы интерфейса*/
+}
+.ancillary-text {
+  font-family: 'Quicksand '; /*текстовые блоки, информационные панели*/
+}
+/*Шрифт для акцентных сообщений и уведомлений*/
+.alert-text {
+  font-family: 'Roboto Condensed'; /*уведомления, предупреждения, короткие сообщения*/
+}
+.alert-text {
+  font-family: 'Oswald '; /*акцентные сообщения, кнопки действий*/
+}
+.color-src {
+  color: #3b546d;
+}
+a,
+.green {
+  text-decoration: none;
+  transition: 0.4s;
+}
+
+@media (hover: hover) {
+  a:hover {
+    background: hsl(204, 70%, 53%, 0.2);
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+}
