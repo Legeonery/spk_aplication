@@ -6,7 +6,7 @@ import { Plus as PlusIcon } from 'lucide-vue-next'
   <div class="p-6">
     <h1 class="text-2xl font-bold mb-6">Складские помещения</h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
       <!-- Карточка добавления склада -->
       <button
         class="flex flex-col items-center justify-center border-2 border-dashed rounded-md border-gray-300 rounded-lg p-8"
@@ -14,6 +14,14 @@ import { Plus as PlusIcon } from 'lucide-vue-next'
         <PlusIcon class="w-12 h-12 text-gray-400" />
         <span class="text-gray-500 mt-2">Добавить склад</span>
       </button>
+      <router-link
+        to="/transport"
+        class="p-4 flex flex-col items-center justify-center border-2 rounded-md second-text-button color-src"
+      >
+        <img src="../../public/wheat (1).png" width="200px" />
+        <span class="text-gray-500 mt-2 font-medium color-src">Наименование</span>
+        <span class="text-gray-500 mt-2 font-medium color-src">Разделение на количество </span>
+      </router-link>
     </div>
   </div>
 </template>
