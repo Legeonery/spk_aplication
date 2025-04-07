@@ -41,9 +41,9 @@ class WarehousesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Warehouses $post)
+    public function show(Warehouses $warehouse)
     {
-        return WarehousesResource::make($post);
+        return WarehousesResource::make($warehouse);
     }
 
     /**
@@ -57,22 +57,22 @@ class WarehousesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(WarehousesUpdateRequest $request, Warehouses $post)
+    public function update(WarehousesUpdateRequest $request, Warehouses $warehouse)
     {
         $data = $request->validated();
-        $post->update($data);
+        $warehouse->update($data);
 
-        $post = $post->fresh();
+        $warehouse = $warehouse->fresh();
 
-        return WarehousesResource::make($post);
+        return WarehousesResource::make($warehouse);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Warehouses $post)
+    public function destroy(Warehouses $warehouse)
     {
-        $post->delete();
+        $warehouse->delete();
         return response()->json([
             'message' => 'done'
         ]);

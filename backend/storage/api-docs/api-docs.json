@@ -386,7 +386,7 @@
                 "tags": [
                     "WarehousesPost"
                 ],
-                "summary": "Получение списка записей",
+                "summary": "Получение списка записей складов",
                 "operationId": "a512782cc50f634d2b97f238afc69ecf",
                 "responses": {
                     "200": {
@@ -445,8 +445,231 @@
                 "tags": [
                     "WarehousesPost"
                 ],
-                "summary": "Создание записи",
+                "summary": "Создание записи о складе",
                 "operationId": "e525d442d2056d52bb883b569e097d9c",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "example": "some title"
+                                            },
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "Зерновой",
+                                                    "Склад запчастей",
+                                                    "Общий"
+                                                ],
+                                                "example": "Зерновой"
+                                            },
+                                            "area": {
+                                                "type": "integer",
+                                                "example": 2000
+                                            },
+                                            "max_historical_load": {
+                                                "type": "integer",
+                                                "example": 2000
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "some title"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "Зерновой",
+                                                        "Склад запчастей",
+                                                        "Общий"
+                                                    ],
+                                                    "example": "Зерновой"
+                                                },
+                                                "area": {
+                                                    "type": "integer",
+                                                    "example": 2000
+                                                },
+                                                "max_historical_load": {
+                                                    "type": "integer",
+                                                    "example": 2000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/warehouses/{warehouse}": {
+            "get": {
+                "tags": [
+                    "WarehousesPost"
+                ],
+                "summary": "Получение единичной записи склада",
+                "operationId": "49fab3847ed03be0e5158b793c05a8fc",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "ID склада",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "some title"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "Зерновой",
+                                                        "Склад запчастей",
+                                                        "Общий"
+                                                    ],
+                                                    "example": "Зерновой"
+                                                },
+                                                "area": {
+                                                    "type": "integer",
+                                                    "example": 2000
+                                                },
+                                                "max_historical_load": {
+                                                    "type": "integer",
+                                                    "example": 2000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Запись с данным индификатором не найдена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "No query results for model [App\\\\Models\\\\Post] 1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "WarehousesPost"
+                ],
+                "summary": "Удаление",
+                "operationId": "2fabde015ca8dbdad07a12a9bd3c41e1",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "ID записи",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "done"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "WarehousesPost"
+                ],
+                "summary": "Обновление записи о складе",
+                "operationId": "5a93acf3368507ce7215d0fc469d847c",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "ID склада",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
