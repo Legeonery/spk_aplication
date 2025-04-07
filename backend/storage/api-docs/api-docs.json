@@ -380,6 +380,100 @@
                     }
                 }
             }
+        },
+        "/api/warehouses": {
+            "post": {
+                "tags": [
+                    "WarehousesPost"
+                ],
+                "summary": "Создание записи",
+                "operationId": "e525d442d2056d52bb883b569e097d9c",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "example": "some title"
+                                            },
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "Зерновой",
+                                                    "Склад запчастей",
+                                                    "Общий"
+                                                ],
+                                                "example": "Зерновой"
+                                            },
+                                            "area": {
+                                                "type": "integer",
+                                                "example": 2000
+                                            },
+                                            "max_historical_load": {
+                                                "type": "integer",
+                                                "example": 2000
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "some title"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "Зерновой",
+                                                        "Склад запчастей",
+                                                        "Общий"
+                                                    ],
+                                                    "example": "Зерновой"
+                                                },
+                                                "area": {
+                                                    "type": "integer",
+                                                    "example": 2000
+                                                },
+                                                "max_historical_load": {
+                                                    "type": "integer",
+                                                    "example": 2000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -398,6 +492,10 @@
         {
             "name": "Auth",
             "description": "Auth"
+        },
+        {
+            "name": "WarehousesPost",
+            "description": "WarehousesPost"
         }
     ]
 }

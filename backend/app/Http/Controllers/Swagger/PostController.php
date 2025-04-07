@@ -165,9 +165,38 @@ use App\Http\Controllers\Controller;
  *             @OA\Property(property = "message", type = "string", example = "Invalid credentials")
  *         )
  *     )
- * )
+ * ),
+ * @OA\Post(
+ *     path = "/api/warehouses",
+ *     summary = "Создание записи",
+ *     tags = { "WarehousesPost" },
+ *     security = {{ "bearerAuth": {} }},
+ *     @OA\RequestBody(
+ *         @OA\JsonContent(
+ *             allOf = {
+ *                 @OA\Schema(
+ *                 @OA\Property(property = "name", type = "string", example = "some title"),
+ *                 @OA\Property(property = "type", type="string",enum={"Зерновой", "Склад запчастей", "Общий"}, example = "Зерновой"),
+ *                 @OA\Property(property = "area", type = "integer", example = 2000),
+ *                 @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
+ *                 )
+ *             }
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response = 200,
+ *         description = "OK",
+ *         @OA\JsonContent(
+ *             @OA\Property(property = "data", type = "object",
+ *                 @OA\Property(property = "id", type = "integer", example = 1),
+ *                 @OA\Property(property = "name", type = "string", example = "some title"),
+ *                 @OA\Property(property = "type", type="string",enum={"Зерновой", "Склад запчастей", "Общий"}, example = "Зерновой"),
+ *                 @OA\Property(property = "area", type = "integer", example = 2000),
+ *                 @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
+ *             ),
+ *         ),
+ *     ),
+ * ),
  */
-class PostController extends Controller
-{
-
-}
+class PostController extends Controller {}
+class WarehousesController extends Controller {}
