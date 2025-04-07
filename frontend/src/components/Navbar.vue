@@ -1,7 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { Menu as MenuIcon, User as UserIcon } from 'lucide-vue-next'
+import { logout } from '@/services/auth'
 
+const handleLogout = () => {
+  logout()
+}
 const emit = defineEmits(['toggle-sidebar']) // <-- ОБЪЯВЛЯЕМ emit
 
 const menuOpen = ref(false)
@@ -39,19 +43,19 @@ const handleSidebarToggle = (event) => {
         <ul class="py-2">
           <li>
             <router-link
-              to="/profile"
+              to="/login"
               class="block px-4 py-2 rounded hover:bg-gray-400 font-semibold second-text-button color-src"
             >
-              Профиль
+              Войти
             </router-link>
           </li>
           <li>
-            <router-link
-              to="/exit"
+            <button
+              @click="handleLogout"
               class="block px-4 py-2 rounded hover:bg-gray-400 font-semibold second-text-button color-src"
             >
               Выйти
-            </router-link>
+            </button>
           </li>
         </ul>
       </div>

@@ -382,6 +382,65 @@
             }
         },
         "/api/warehouses": {
+            "get": {
+                "tags": [
+                    "WarehousesPost"
+                ],
+                "summary": "Получение списка записей",
+                "operationId": "a512782cc50f634d2b97f238afc69ecf",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "some title"
+                                                    },
+                                                    "type": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "Зерновой",
+                                                            "Склад запчастей",
+                                                            "Общий"
+                                                        ],
+                                                        "example": "Зерновой"
+                                                    },
+                                                    "area": {
+                                                        "type": "integer",
+                                                        "example": 2000
+                                                    },
+                                                    "max_historical_load": {
+                                                        "type": "integer",
+                                                        "example": 2000
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "WarehousesPost"

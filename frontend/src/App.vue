@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onBeforeMount, nextTick } from 'vue'
 import Navbar from './components/Navbar.vue'
 import Sidebar from './components/Sidebar.vue'
+import { useRouter } from 'vue-router'
 
 const isSidebarOpen = ref(false)
 
@@ -14,15 +15,38 @@ const closeSidebar = (event) => {
     isSidebarOpen.value = false
   }
 }
+const isAuthenticated = ref(false)
+const router = useRouter()
+
+// Проверка на наличие токена в localStorage
+onBeforeMount(() => {
+  nextTick(() => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      isAuthenticated.value = true
+    } else {
+      isAuthenticated.value = false
+      router.push('/login') // Перенаправляем на страницу входа, если нет токена
+    }
+  })
+})
 </script>
 
 <template>
   <div @click="closeSidebar">
-    <Navbar @toggle-sidebar="toggleSidebar" />
-    <Sidebar :isOpen="isSidebarOpen" @close-sidebar="toggleSidebar" class="sidebar" />
-    <main class="p-4">
-      <router-view></router-view>
-    </main>
+    <!-- Если пользователь не авторизован, показываем только страницу логина -->
+    <template v-if="isAuthenticated">
+      <Navbar @toggle-sidebar="toggleSidebar" />
+      <Sidebar :isOpen="isSidebarOpen" @close-sidebar="toggleSidebar" class="sidebar" />
+      <main class="p-4">
+        <router-view></router-view>
+      </main>
+    </template>
+
+    <!-- Если пользователь авторизован, показываем основной контент -->
+    <template v-else>
+      <router-view />
+    </template>
   </div>
 </template>
 

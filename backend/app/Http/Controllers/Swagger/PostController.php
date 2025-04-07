@@ -197,6 +197,25 @@ use App\Http\Controllers\Controller;
  *         ),
  *     ),
  * ),
+ *@OA\Get(
+ *     path = "/api/warehouses",
+ *     summary = "Получение списка записей",
+ *     tags = { "WarehousesPost" },
+ *     security = {{ "bearerAuth": {} }},
+ *     @OA\Response(
+ *         response = 200,
+ *         description = "OK",
+ *         @OA\JsonContent(
+ *             @OA\Property(property = "data", type = "array",@OA\Items(
+ *                 @OA\Property(property = "id", type = "integer", example = 1),
+ *                 @OA\Property(property = "name", type = "string", example = "some title"),
+ *                 @OA\Property(property = "type", type="string",enum={"Зерновой", "Склад запчастей", "Общий"}, example = "Зерновой"),
+ *                 @OA\Property(property = "area", type = "integer", example = 2000),
+ *                 @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
+ *             )),
+ *         ),
+ *     ),
+ * ),
  */
 class PostController extends Controller {}
 class WarehousesController extends Controller {}
