@@ -2,13 +2,20 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Warehouse from '../views/Warehouse.vue'
 import Transport from '../views/Transport.vue'
 import LoginView from '@/views/LoginView.vue'
-import App from '@/App.vue'
+import MainLayout from '@/layouts/MainLayout.vue' // 👈 наш layout
 
 const routes = [
-  { path: '/warehouse', component: Warehouse, meta: { requiresAuth: true } },
-  { path: '/transport', component: Transport, meta: { requiresAuth: true } },
+  {
+    path: '/',
+    component: MainLayout, // 👈 здесь оборачиваем
+    meta: { requiresAuth: true },
+    children: [
+      { path: '', redirect: '/warehouse' }, // 👈 перенаправление на что-то по умолчанию
+      { path: 'warehouse', component: Warehouse },
+      { path: 'transport', component: Transport },
+    ],
+  },
   { path: '/login', component: LoginView },
-  { path: '/', component: App },
 ]
 
 const router = createRouter({
@@ -18,10 +25,10 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  if (to.path !== '/login' && !token) {
-    next('/login') // Перенаправление на страницу входа, если нет токена
+  if (to.meta.requiresAuth && !token) {
+    next('/login')
   } else {
-    next() // Иначе продолжаем переход
+    next()
   }
 })
 
