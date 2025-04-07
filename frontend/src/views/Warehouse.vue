@@ -25,18 +25,18 @@ const fetchWarehouses = async () => {
 const createWarehouse = async () => {
   error.value = ''
 
-  if (!form.name || !form.type) {
+  if (!form.value.name || !form.value.type) {
     error.value = 'Пожалуйста, заполните наименование и выберите тип склада.'
     return
   }
 
   try {
-    await api.post('/warehouses', form)
-    isModalOpen.value = false
-    form.name = ''
-    form.type = ''
-    form.area = null
-    form.max_historical_load = null
+    await api.post('/warehouses', form.value)
+    showModal.value = false
+    form.value.name = ''
+    form.value.type = ''
+    form.value.area = null
+    form.value.max_historical_load = null
     const response = await api.get('/warehouses')
     warehouses.value = response.data.data
   } catch (err) {
@@ -44,7 +44,6 @@ const createWarehouse = async () => {
     console.error(err)
   }
 }
-
 onMounted(fetchWarehouses)
 </script>
 
