@@ -168,7 +168,7 @@ use App\Http\Controllers\Controller;
  * ),
  * @OA\Post(
  *     path = "/api/warehouses",
- *     summary = "Создание записи",
+ *     summary = "Создание записи о складе",
  *     tags = { "WarehousesPost" },
  *     security = {{ "bearerAuth": {} }},
  *     @OA\RequestBody(
@@ -199,7 +199,7 @@ use App\Http\Controllers\Controller;
  * ),
  *@OA\Get(
  *     path = "/api/warehouses",
- *     summary = "Получение списка записей",
+ *     summary = "Получение списка записей складов",
  *     tags = { "WarehousesPost" },
  *     security = {{ "bearerAuth": {} }},
  *     @OA\Response(
@@ -213,6 +213,100 @@ use App\Http\Controllers\Controller;
  *                 @OA\Property(property = "area", type = "integer", example = 2000),
  *                 @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
  *             )),
+ *         ),
+ *     ),
+ * ),
+ * @OA\Get(
+ *     path = "/api/warehouses/{warehouse}",
+ *     summary = "Получение единичной записи склада",
+ *     tags = { "WarehousesPost" },
+ *     security = {{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         description = "ID склада",
+ *         in = "path",
+ *         name = "warehouse",
+ *         required = true,
+ *         example = 1
+ *     ),
+ *     @OA\Response(
+ *         response = 200,
+ *         description = "OK",
+ *         @OA\JsonContent(
+ *             @OA\Property(property = "data", type = "object",
+ *                 @OA\Property(property = "id", type = "integer", example = 1),
+ *                 @OA\Property(property = "name", type = "string", example = "some title"),
+ *                 @OA\Property(property = "type", type="string",enum={"Зерновой", "Склад запчастей", "Общий"}, example = "Зерновой"),
+ *                 @OA\Property(property = "area", type = "integer", example = 2000),
+ *                 @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
+ *             ),
+ *         ),
+ *     ),
+ *     @OA\Response(
+ *         response = 404,
+ *         description = "Запись с данным индификатором не найдена",
+ *         @OA\JsonContent(
+ *             @OA\Property(property = "message", type = "string", example = "No query results for model [App\\Models\\Post] 1")
+ *         )
+ *     ),
+ * ),
+ * @OA\Patch(
+ *     path = "/api/warehouses/{warehouse}",
+ *     summary = "Обновление записи о складе",
+ *     tags = { "WarehousesPost" },
+ *     security = {{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         description = "ID склада",
+ *         in = "path",
+ *         name = "warehouse",
+ *         required = true,
+ *         example = 1
+ *     ),
+ * 
+ *     @OA\RequestBody(
+ *         @OA\JsonContent(
+ *             allOf = {
+ *                 @OA\Schema(
+ *                     @OA\Property(property = "name", type = "string", example = "some title"),
+ *                     @OA\Property(property = "type", type="string",enum={"Зерновой", "Склад запчастей", "Общий"}, example = "Зерновой"),
+ *                     @OA\Property(property = "area", type = "integer", example = 2000),
+ *                     @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
+ *                 )
+ *             }
+ *         )
+ *     ),
+ * 
+ *     @OA\Response(
+ *         response = 200,
+ *         description = "OK",
+ *         @OA\JsonContent(
+ *             @OA\Property(property = "data", type = "object",
+ *                 @OA\Property(property = "id", type = "integer", example = 1),
+ *                 @OA\Property(property = "name", type = "string", example = "some title"),
+ *                 @OA\Property(property = "type", type="string",enum={"Зерновой", "Склад запчастей", "Общий"}, example = "Зерновой"),
+ *                 @OA\Property(property = "area", type = "integer", example = 2000),
+ *                 @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
+ *             ),
+ *         ),
+ *     ),
+ * ),
+ * 
+ * @OA\Delete(
+ *     path = "/api/warehouses/{warehouse}",
+ *     summary = "Удаление",
+ *     tags = { "WarehousesPost" },
+ *     security = {{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         description = "ID записи",
+ *         in = "path",
+ *         name = "warehouse",
+ *         required = true,
+ *         example = 1
+ *     ),
+ *     @OA\Response(
+ *         response = 200,
+ *         description = "OK",
+ *         @OA\JsonContent(
+ *             @OA\Property(property = "message", type = "string", example = "done"),
  *         ),
  *     ),
  * ),
