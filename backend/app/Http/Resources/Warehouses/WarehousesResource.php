@@ -19,6 +19,7 @@ class WarehousesResource extends JsonResource
             'name' => $this->name,
             'type' => $this->type,
             'area' => $this->area,
+            'status' => $this->status,
             'max_historical_load' => $this->max_historical_load,
         ];
     }

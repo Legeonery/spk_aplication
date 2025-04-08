@@ -62,19 +62,20 @@ onMounted(fetchWarehouses)
       </button>
 
       <!-- Список складов -->
-      <div
+      <router-link
         v-for="warehouse in warehouses"
         :key="warehouse.id"
-        class="p-4 flex flex-col items-center justify-center border-2 rounded-md shadow-sm"
+        :to="`/warehouse/${warehouse.id}`"
+        class="p-4 flex flex-col items-center justify-center border-2 rounded-md shadow-sm hover:bg-gray-50 transition"
       >
         <img src="../../public/wheat (1).png" width="120px" />
         <span class="text-gray-800 mt-2 font-medium">{{ warehouse.name }}</span>
         <span class="text-gray-500 text-sm">Тип: {{ warehouse.type }}</span>
         <span class="text-gray-500 text-sm">Площадь: {{ warehouse.area }} м²</span>
-        <span class="text-gray-500 text-sm"
-          >Макс. загрузка (тонн): {{ warehouse.max_historical_load }}</span
-        >
-      </div>
+        <span class="text-gray-500 text-sm">
+          Макс. загрузка (тонн): {{ warehouse.max_historical_load }}
+        </span>
+      </router-link>
     </div>
 
     <!-- Модальное окно -->

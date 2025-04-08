@@ -178,6 +178,7 @@ use App\Http\Controllers\Controller;
  *                 @OA\Property(property = "name", type = "string", example = "some title"),
  *                 @OA\Property(property = "type", type="string",enum={"Зерновой", "Склад запчастей", "Общий"}, example = "Зерновой"),
  *                 @OA\Property(property = "area", type = "integer", example = 2000),
+ *                 @OA\Property(property = "status", type = "integer", example = 1),
  *                 @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
  *                 )
  *             }
@@ -192,6 +193,7 @@ use App\Http\Controllers\Controller;
  *                 @OA\Property(property = "name", type = "string", example = "some title"),
  *                 @OA\Property(property = "type", type="string",enum={"Зерновой", "Склад запчастей", "Общий"}, example = "Зерновой"),
  *                 @OA\Property(property = "area", type = "integer", example = 2000),
+ *                 @OA\Property(property = "status", type = "integer", example = 1),
  *                 @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
  *             ),
  *         ),
@@ -210,6 +212,7 @@ use App\Http\Controllers\Controller;
  *                 @OA\Property(property = "id", type = "integer", example = 1),
  *                 @OA\Property(property = "name", type = "string", example = "some title"),
  *                 @OA\Property(property = "type", type="string",enum={"Зерновой", "Склад запчастей", "Общий"}, example = "Зерновой"),
+ *                 @OA\Property(property = "status", type = "integer", example = 1),
  *                 @OA\Property(property = "area", type = "integer", example = 2000),
  *                 @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
  *             )),
@@ -237,6 +240,7 @@ use App\Http\Controllers\Controller;
  *                 @OA\Property(property = "name", type = "string", example = "some title"),
  *                 @OA\Property(property = "type", type="string",enum={"Зерновой", "Склад запчастей", "Общий"}, example = "Зерновой"),
  *                 @OA\Property(property = "area", type = "integer", example = 2000),
+ *                 @OA\Property(property = "status", type = "integer", example = 1),
  *                 @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
  *             ),
  *         ),
@@ -269,6 +273,7 @@ use App\Http\Controllers\Controller;
  *                     @OA\Property(property = "name", type = "string", example = "some title"),
  *                     @OA\Property(property = "type", type="string",enum={"Зерновой", "Склад запчастей", "Общий"}, example = "Зерновой"),
  *                     @OA\Property(property = "area", type = "integer", example = 2000),
+ *                     @OA\Property(property = "status", type = "integer", example = 1),
  *                     @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
  *                 )
  *             }
@@ -284,6 +289,7 @@ use App\Http\Controllers\Controller;
  *                 @OA\Property(property = "name", type = "string", example = "some title"),
  *                 @OA\Property(property = "type", type="string",enum={"Зерновой", "Склад запчастей", "Общий"}, example = "Зерновой"),
  *                 @OA\Property(property = "area", type = "integer", example = 2000),
+ *                 @OA\Property(property = "status", type = "integer", example = 1),
  *                 @OA\Property(property = "max_historical_load", type = "integer", example = 2000),
  *             ),
  *         ),

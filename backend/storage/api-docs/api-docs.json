@@ -416,6 +416,10 @@
                                                         ],
                                                         "example": "Зерновой"
                                                     },
+                                                    "status": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
                                                     "area": {
                                                         "type": "integer",
                                                         "example": 2000
@@ -471,6 +475,10 @@
                                                 "type": "integer",
                                                 "example": 2000
                                             },
+                                            "status": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
                                             "max_historical_load": {
                                                 "type": "integer",
                                                 "example": 2000
@@ -512,6 +520,10 @@
                                                 "area": {
                                                     "type": "integer",
                                                     "example": 2000
+                                                },
+                                                "status": {
+                                                    "type": "integer",
+                                                    "example": 1
                                                 },
                                                 "max_historical_load": {
                                                     "type": "integer",
@@ -579,6 +591,10 @@
                                                 "area": {
                                                     "type": "integer",
                                                     "example": 2000
+                                                },
+                                                "status": {
+                                                    "type": "integer",
+                                                    "example": 1
                                                 },
                                                 "max_historical_load": {
                                                     "type": "integer",
@@ -694,6 +710,10 @@
                                                 "type": "integer",
                                                 "example": 2000
                                             },
+                                            "status": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
                                             "max_historical_load": {
                                                 "type": "integer",
                                                 "example": 2000
@@ -735,6 +755,10 @@
                                                 "area": {
                                                     "type": "integer",
                                                     "example": 2000
+                                                },
+                                                "status": {
+                                                    "type": "integer",
+                                                    "example": 1
                                                 },
                                                 "max_historical_load": {
                                                     "type": "integer",

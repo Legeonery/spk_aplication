@@ -3,6 +3,7 @@ import Warehouse from '../views/Warehouse.vue'
 import Transport from '../views/Transport.vue'
 import LoginView from '@/views/LoginView.vue'
 import MainLayout from '@/layouts/MainLayout.vue' // 👈 наш layout
+import WarehousePage from '@/views/WarehousePage.vue'
 
 const routes = [
   {
@@ -13,6 +14,7 @@ const routes = [
       { path: '', redirect: '/warehouse' }, // 👈 перенаправление на что-то по умолчанию
       { path: 'warehouse', component: Warehouse },
       { path: 'transport', component: Transport },
+      { path: 'warehouse/:id', component: WarehousePage },
     ],
   },
   { path: '/login', component: LoginView },

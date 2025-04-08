@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->enum('type', ['склад запчастей', 'зерновой']); // можно изменить список типов
             $table->integer('area'); // площадь в m^2
+            $table->integer('status')->nullable();
             $table->float('max_historical_load')->nullable(); // в тоннах
             $table->timestamps();
         });
