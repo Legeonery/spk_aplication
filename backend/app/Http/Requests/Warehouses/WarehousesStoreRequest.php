@@ -26,7 +26,6 @@ class WarehousesStoreRequest extends FormRequest
             'type' => 'required|string',
             'area' => 'integer',
             'status' =>'integer',
-            'max_historical_load' => 'integer',
         ];
     }
 }

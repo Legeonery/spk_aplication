@@ -6,6 +6,7 @@ use App\Http\Requests\Warehouses\WarehousesStoreRequest;
 use App\Http\Requests\Warehouses\WarehousesUpdateRequest;
 use App\Http\Resources\Warehouses\WarehousesResource;
 use App\Models\Warehouses;
+use App\Models\WarehouseGrains;
 use Illuminate\Http\Request;
 
 class WarehousesController extends Controller
@@ -60,11 +61,15 @@ class WarehousesController extends Controller
     public function update(WarehousesUpdateRequest $request, Warehouses $warehouse)
     {
         $data = $request->validated();
+
+        // Если склад не зерновой — обнуляем max_historical_load
+        if ($data['type'] !== 'зерновой') {
+            $data['max_historical_load'] = null;
+        }
+
         $warehouse->update($data);
 
-        $warehouse = $warehouse->fresh();
-
-        return WarehousesResource::make($warehouse);
+        return WarehousesResource::make($warehouse->fresh());
     }
 
     /**
@@ -73,8 +78,13 @@ class WarehousesController extends Controller
     public function destroy(Warehouses $warehouse)
     {
         $warehouse->delete();
+
         return response()->json([
-            'message' => 'done'
+            'message' => 'Склад удалён'
         ]);
+    }
+    public function grains(Warehouses $warehouse)
+    {
+        return $warehouse->warehouseGrains()->with('grainType')->get();
     }
 }

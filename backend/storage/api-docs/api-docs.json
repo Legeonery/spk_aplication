@@ -780,6 +780,462 @@
                     }
                 ]
             }
+        },
+        "/api/warehouses/{warehouse}/grains": {
+            "get": {
+                "tags": [
+                    "WarehousesPost"
+                ],
+                "summary": "Получение остатков по зерновым культурам на складе",
+                "operationId": "d24069d5558894b783acc25487d3e9d0",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "ID склада",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "warehouse_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "grain_type_id": {
+                                                "type": "integer",
+                                                "example": 2
+                                            },
+                                            "amount": {
+                                                "type": "integer",
+                                                "example": 1500
+                                            },
+                                            "grain_type": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Пшеница"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Ошибка авторизации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Склад не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Not Found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/grain-deliveries": {
+            "post": {
+                "tags": [
+                    "GrainDeliveries"
+                ],
+                "summary": "Добавление поставки зерна",
+                "operationId": "8856295e499921e5b835f377ad80b262",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "warehouse_id",
+                                    "grain_type_id",
+                                    "volume",
+                                    "delivery_date"
+                                ],
+                                "properties": {
+                                    "warehouse_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "grain_type_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "volume": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1500
+                                    },
+                                    "delivery_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-06-01"
+                                    },
+                                    "vehicle_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "driver_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Поставка добавлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Поставка добавлена"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "warehouse_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "grain_type_id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "volume": {
+                                                    "type": "number",
+                                                    "example": 1500
+                                                },
+                                                "delivery_date": {
+                                                    "type": "string",
+                                                    "example": "2025-06-01"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/warehouses/{warehouse}/deliveries": {
+            "get": {
+                "tags": [
+                    "GrainDeliveries"
+                ],
+                "summary": "Получение истории поставок по складу",
+                "operationId": "8a173bae2877a883db1793026d8f321f",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "ID склада",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список поставок",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "warehouse_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "grain_type_id": {
+                                                "type": "integer",
+                                                "example": 2
+                                            },
+                                            "grain_type": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Пшеница"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "volume": {
+                                                "type": "number",
+                                                "example": 1500
+                                            },
+                                            "delivery_date": {
+                                                "type": "string",
+                                                "example": "2025-06-01"
+                                            },
+                                            "driver": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Иван Иванов"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/warehouses/{warehouse}/shipments": {
+            "get": {
+                "tags": [
+                    "GrainShipments"
+                ],
+                "summary": "Получение истории отгрузок по складу",
+                "operationId": "ddca4dbc0e05eb4ccabc09a7d962cc3e",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "ID склада",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список отгрузок",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "warehouse_id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "grain_type_id": {
+                                                "type": "integer",
+                                                "example": 2
+                                            },
+                                            "grain_type": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 2
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Пшеница"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "volume": {
+                                                "type": "number",
+                                                "example": 1000
+                                            },
+                                            "shipment_date": {
+                                                "type": "string",
+                                                "example": "2025-06-15"
+                                            },
+                                            "driver": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 3
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Пётр Петров"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/grain-shipments": {
+            "post": {
+                "tags": [
+                    "GrainShipments"
+                ],
+                "summary": "Добавление отгрузки зерна",
+                "operationId": "999929b57e0b51ec18f0e55d1879f7e5",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "warehouse_id",
+                                    "grain_type_id",
+                                    "volume",
+                                    "shipment_date"
+                                ],
+                                "properties": {
+                                    "warehouse_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "grain_type_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "volume": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 1000
+                                    },
+                                    "shipment_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-06-15"
+                                    },
+                                    "vehicle_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "driver_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Отгрузка добавлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Отгрузка добавлена"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -802,6 +1258,14 @@
         {
             "name": "WarehousesPost",
             "description": "WarehousesPost"
+        },
+        {
+            "name": "GrainDeliveries",
+            "description": "GrainDeliveries"
+        },
+        {
+            "name": "GrainShipments",
+            "description": "GrainShipments"
         }
     ]
 }

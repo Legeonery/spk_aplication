@@ -22,11 +22,11 @@ class WarehousesUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string',
-            'type' => 'required|string',
-            'area' => 'required|integer',
-            'status' =>'integer',
-            'max_historical_load' => 'integer',
+            'name' => 'required|string|max:255',
+            'type' => 'required|in:зерновой,склад запчастей,другое',
+            'area' => 'required|integer|min:1',
+            'status' => 'nullable|integer',
+            'max_historical_load' => 'nullable|numeric|min:0',
         ];
     }
 }

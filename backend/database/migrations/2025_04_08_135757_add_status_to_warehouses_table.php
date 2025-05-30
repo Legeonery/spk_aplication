@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('warehouses', function (Blueprint $table) {
-            $table->integer('status')->nullable(); // или default(0) тоесть изначально закрыт, если хочешь
+            if (!Schema::hasColumn('warehouses', 'status')) {
+                $table->integer('status')->nullable();
+            }
         });
     }
 

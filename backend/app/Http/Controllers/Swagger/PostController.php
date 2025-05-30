@@ -316,6 +316,185 @@ use App\Http\Controllers\Controller;
  *         ),
  *     ),
  * ),
+ *
+ * @OA\Get(
+ *     path = "/api/warehouses/{warehouse}/grains",
+ *     summary = "Получение остатков по зерновым культурам на складе",
+ *     tags = { "WarehousesPost" },
+ *     security = {{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         description = "ID склада",
+ *         in = "path",
+ *         name = "warehouse",
+ *         required = true,
+ *         example = 1
+ *     ),
+ *     @OA\Response(
+ *         response = 200,
+ *         description = "Успешно",
+ *         @OA\JsonContent(
+ *             type = "array",
+ *             @OA\Items(
+ *                 @OA\Property(property = "id", type = "integer", example = 1),
+ *                 @OA\Property(property = "warehouse_id", type = "integer", example = 1),
+ *                 @OA\Property(property = "grain_type_id", type = "integer", example = 2),
+ *                 @OA\Property(property = "amount", type = "integer", example = 1500),
+ *                 @OA\Property(property = "grain_type", type = "object",
+ *                     @OA\Property(property = "id", type = "integer", example = 2),
+ *                     @OA\Property(property = "name", type = "string", example = "Пшеница")
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response = 401,
+ *         description = "Ошибка авторизации",
+ *         @OA\JsonContent(
+ *             @OA\Property(property = "message", type = "string", example = "Unauthenticated.")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response = 404,
+ *         description = "Склад не найден",
+ *         @OA\JsonContent(
+ *             @OA\Property(property = "message", type = "string", example = "Not Found")
+ *         )
+ *     )
+ * )
+ * @OA\Post(
+ *     path="/api/grain-deliveries",
+ *     summary="Добавление поставки зерна",
+ *     tags={"GrainDeliveries"},
+ *     security={{"bearerAuth": {}}},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"warehouse_id","grain_type_id","volume","delivery_date"},
+ *             @OA\Property(property="warehouse_id", type="integer", example=1),
+ *             @OA\Property(property="grain_type_id", type="integer", example=2),
+ *             @OA\Property(property="volume", type="number", format="float", example=1500),
+ *             @OA\Property(property="delivery_date", type="string", format="date", example="2025-06-01"),
+ *             @OA\Property(property="vehicle_id", type="integer", example=3),
+ *             @OA\Property(property="driver_id", type="integer", example=5)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Поставка добавлена",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Поставка добавлена"),
+ *             @OA\Property(property="data", type="object",
+ *                 @OA\Property(property="id", type="integer", example=1),
+ *                 @OA\Property(property="warehouse_id", type="integer", example=1),
+ *                 @OA\Property(property="grain_type_id", type="integer", example=2),
+ *                 @OA\Property(property="volume", type="number", example=1500),
+ *                 @OA\Property(property="delivery_date", type="string", example="2025-06-01")
+ *             )
+ *         )
+ *     )
+ * ),
+ *
+ * @OA\Get(
+ *     path="/api/warehouses/{warehouse}/deliveries",
+ *     summary="Получение истории поставок по складу",
+ *     tags={"GrainDeliveries"},
+ *     security={{"bearerAuth": {}}},
+ *     @OA\Parameter(
+ *         name="warehouse",
+ *         in="path",
+ *         description="ID склада",
+ *         required=true,
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Список поставок",
+ *         @OA\JsonContent(
+ *             type="array",
+ *             @OA\Items(
+ *                 @OA\Property(property="id", type="integer", example=1),
+ *                 @OA\Property(property="warehouse_id", type="integer", example=1),
+ *                 @OA\Property(property="grain_type_id", type="integer", example=2),
+ *                 @OA\Property(property="grain_type", type="object",
+ *                     @OA\Property(property="id", type="integer", example=2),
+ *                     @OA\Property(property="name", type="string", example="Пшеница")
+ *                 ),
+ *                 @OA\Property(property="volume", type="number", example=1500),
+ *                 @OA\Property(property="delivery_date", type="string", example="2025-06-01"),
+ *                 @OA\Property(property="driver", type="object",
+ *                     @OA\Property(property="id", type="integer", example=5),
+ *                     @OA\Property(property="name", type="string", example="Иван Иванов")
+ *                 )
+ *             )
+ *         )
+ *     )
+ * ),
+ *
+ * @OA\Get(
+ *     path="/api/warehouses/{warehouse}/shipments",
+ *     summary="Получение истории отгрузок по складу",
+ *     tags={"GrainShipments"},
+ *     security={{"bearerAuth": {}}},
+ *     @OA\Parameter(
+ *         name="warehouse",
+ *         in="path",
+ *         description="ID склада",
+ *         required=true,
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Список отгрузок",
+ *         @OA\JsonContent(
+ *             type="array",
+ *             @OA\Items(
+ *                 @OA\Property(property="id", type="integer", example=1),
+ *                 @OA\Property(property="warehouse_id", type="integer", example=1),
+ *                 @OA\Property(property="grain_type_id", type="integer", example=2),
+ *                 @OA\Property(property="grain_type", type="object",
+ *                     @OA\Property(property="id", type="integer", example=2),
+ *                     @OA\Property(property="name", type="string", example="Пшеница")
+ *                 ),
+ *                 @OA\Property(property="volume", type="number", example=1000),
+ *                 @OA\Property(property="shipment_date", type="string", example="2025-06-15"),
+ *                 @OA\Property(property="driver", type="object",
+ *                     @OA\Property(property="id", type="integer", example=3),
+ *                     @OA\Property(property="name", type="string", example="Пётр Петров")
+ *                 )
+ *             )
+ *         )
+ *     )
+ * ),
+ *
+ * @OA\Post(
+ *     path="/api/grain-shipments",
+ *     summary="Добавление отгрузки зерна",
+ *     tags={"GrainShipments"},
+ *     security={{"bearerAuth": {}}},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"warehouse_id","grain_type_id","volume","shipment_date"},
+ *             @OA\Property(property="warehouse_id", type="integer", example=1),
+ *             @OA\Property(property="grain_type_id", type="integer", example=2),
+ *             @OA\Property(property="volume", type="number", format="float", example=1000),
+ *             @OA\Property(property="shipment_date", type="string", format="date", example="2025-06-15"),
+ *             @OA\Property(property="vehicle_id", type="integer", example=1),
+ *             @OA\Property(property="driver_id", type="integer", example=3)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Отгрузка добавлена",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Отгрузка добавлена"),
+ *         )
+ *     )
+ * )
  */
-class PostController extends Controller {}
-class WarehousesController extends Controller {}
+class PostController extends Controller
+{
+}
+class WarehousesController extends Controller
+{
+}
