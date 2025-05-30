@@ -7,8 +7,8 @@ use App\Models\GrainTypes;
 
 class GrainTypesController extends Controller
 {
-public function index()
-{
-    return response()->json(GrainTypes::all());
-}
+    public function index()
+    {
+        return response()->json(GrainTypes::all());
+    }
 }

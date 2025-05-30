@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import api from '@/services/api'
 import BarChart from '@/components/BarChart.vue'
 import CreateGrainDelivery from '@/components/CreateGrainDelivery.vue'
+import GrainDeliveryHistory from '@/components/GrainDeliveryHistory.vue'
 
 const showDeliveryModal = ref(false)
 
@@ -118,58 +119,100 @@ const chartOptions = {
     title: { display: true, text: 'Объём поставок по датам' }
   }
 }
+const activeTab = ref('grains')
+
+const tabs = [
+  { key: 'grains', label: '🌾 Остатки' },
+  { key: 'deliveries', label: '🚚 Поставки' },
+  { key: 'shipments', label: '📦 Отгрузки' },
+  { key: 'chart', label: '📊 Диаграмма' },
+]
 </script>
 
 <template>
-  <div class="p-6">
+  <div class="p-6 max-w-6xl mx-auto space-y-10">
     <h1 class="text-2xl font-bold mb-4">Информация о складе</h1>
 
-    <div v-if="warehouse">
-      <p><strong>Наименование:</strong> {{ warehouse.name }}</p>
-      <p><strong>Тип:</strong> {{ warehouse.type }}</p>
-      <p><strong>Площадь:</strong> {{ warehouse.area }} м²</p>
-      <p><strong>Макс. загрузка:</strong> {{ warehouse.max_historical_load ?? '—' }} тонн</p>
+    <div v-if="warehouse" class="bg-white rounded-xl shadow-md p-6 space-y-6 border">
+      <h2 class="text-2xl font-semibold text-gray-800">Информация о складе</h2>
 
-      <div class="flex gap-4 mt-4">
-        <button @click="openEditModal" class="bg-yellow-400 px-4 py-2 rounded text-white">✏️ Редактировать</button>
-        <button @click="deleteWarehouse" class="bg-red-500 px-4 py-2 rounded text-white">🗑️ Удалить</button>
-        <button @click="downloadReport" class="bg-green-600 px-4 py-2 rounded text-white">📄 Выгрузить отчёт</button>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
+        <p><strong>Наименование:</strong> {{ warehouse.name }}</p>
+        <p><strong>Тип:</strong> {{ warehouse.type }}</p>
+        <p><strong>Площадь:</strong> {{ warehouse.area }} м²</p>
+        <p><strong>Макс. загрузка:</strong> {{ warehouse.max_historical_load ?? '—' }} тонн</p>
       </div>
 
-      <div v-if="grains.length" class="mt-8">
-        <h2 class="text-xl font-semibold mb-2">Остатки по культурам:</h2>
-        <ul class="list-disc list-inside text-gray-700">
-          <li v-for="grain in grains" :key="grain.id">
-            {{ grain.grain_type.name }} — {{ grain.amount }} т
-          </li>
-        </ul>
-      </div>
-      <button @click="showDeliveryModal = true" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
-        ➕ Добавить поставку
-      </button>
-
-      <div v-if="deliveries.length" class="mt-10">
-        <h2 class="text-xl font-semibold mb-2">История поставок</h2>
-        <ul>
-          <li v-for="d in deliveries" :key="d.id">
-            {{ d.delivery_date }} — {{ d.grain_type }} — {{ d.volume }} т ({{ d.driver?.name ?? 'Без водителя' }})
-          </li>
-        </ul>
+      <div class="flex flex-wrap gap-3 mt-2">
+        <button @click="openEditModal"
+          class="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded text-white font-medium">
+          ✏️ Редактировать
+        </button>
+        <button @click="deleteWarehouse" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white font-medium">
+          🗑️ Удалить
+        </button>
+        <button @click="downloadReport"
+          class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-medium">
+          📄 Выгрузить отчёт
+        </button>
       </div>
 
-      <div v-if="shipments.length" class="mt-10">
-        <h2 class="text-xl font-semibold mb-2">История отгрузок</h2>
-        <ul>
-          <li v-for="s in shipments" :key="s.id">
-            {{ s.shipment_date }} — {{ s.grain_type }} — {{ s.volume }} т ({{ s.driver?.name ?? 'Без водителя' }})
-          </li>
-        </ul>
+      <!-- Вкладки -->
+      <div class="flex flex-wrap gap-2 border-b mt-6">
+        <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key" :class="[
+          'px-4 py-2 text-sm font-medium rounded-t-md transition',
+          activeTab === tab.key
+            ? 'bg-blue-600 text-white'
+            : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+        ]">
+          {{ tab.label }}
+        </button>
       </div>
 
-      <div v-if="deliveries.length" class="mt-10">
-        <h2 class="text-xl font-semibold mb-2">Диаграмма объёма поставок</h2>
-        <div class="h-[300px] w-full">
-          <BarChart :chart-data="deliveryChartData" :chart-options="chartOptions" />
+      <!-- Контент вкладок -->
+      <div class="pt-4 space-y-6">
+        <!-- Остатки -->
+        <div v-if="activeTab === 'grains'">
+          <div class="text-gray-700 space-y-1" v-if="grains.length">
+            <h3 class="text-lg font-semibold mb-2">Остатки по культурам</h3>
+            <ul class="list-disc list-inside">
+              <li v-for="grain in grains" :key="grain.id">
+                {{ grain.grain_type.name }} — {{ grain.amount }} т
+              </li>
+            </ul>
+          </div>
+          <div v-else class="text-gray-500">Нет данных по остаткам.</div>
+        </div>
+
+        <!-- Поставки -->
+        <div v-if="activeTab === 'deliveries'">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-lg font-semibold">История поставок</h3>
+            <button @click="showDeliveryModal = true"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium shadow">
+              ➕ Добавить поставку
+            </button>
+          </div>
+          <GrainDeliveryHistory :deliveries="deliveries" :grains="grains" />
+        </div>
+
+        <!-- Отгрузки -->
+        <div v-if="activeTab === 'shipments'">
+          <h3 class="text-lg font-semibold mb-2">История отгрузок</h3>
+          <ul class="text-gray-700 space-y-1" v-if="shipments.length">
+            <li v-for="s in shipments" :key="s.id">
+              {{ s.shipment_date }} — {{ s.grain_type }} — {{ s.volume }} т ({{ s.driver?.name ?? 'Без водителя' }})
+            </li>
+          </ul>
+          <div v-else class="text-gray-500">Нет данных по отгрузкам.</div>
+        </div>
+
+        <!-- Диаграмма -->
+        <div v-if="activeTab === 'chart'">
+          <h3 class="text-lg font-semibold mb-2">Диаграмма объёма поставок</h3>
+          <div class="h-[300px] w-full">
+            <BarChart :chart-data="deliveryChartData" :chart-options="chartOptions" />
+          </div>
         </div>
       </div>
     </div>
@@ -210,8 +253,8 @@ const chartOptions = {
     </transition>
     {{ console.log('Проверка ID склада:', warehouse?.id) }}
     <Suspense>
-      <CreateGrainDelivery v-if="showDeliveryModal" :key="warehouse?.id" :warehouse-id="warehouse?.id"
-        :show="showDeliveryModal" @close="showDeliveryModal = false" @success="fetchDeliveries" />
+      <CreateGrainDelivery :warehouse-id="warehouse?.id" :show="showDeliveryModal" @close="showDeliveryModal = false"
+        @success="fetchDeliveries" />
     </Suspense>
   </div>
 </template>

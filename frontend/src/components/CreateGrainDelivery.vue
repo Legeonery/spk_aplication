@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import api from '@/services/api'
+import { onMounted } from 'vue'
 
 const props = defineProps({
     warehouseId: Number,
@@ -23,18 +24,18 @@ const drivers = ref([])
 const error = ref('')
 
 const loadOptions = async () => {
-    const [grains, vehiclesRes, driversRes] = await Promise.all([
-        api.get('/grain-types'),
-        api.get('/vehicles'),
-        api.get('/drivers')
-    ])
-    grainTypes.value = grains.data
-    vehicles.value = vehiclesRes.data
-    drivers.value = driversRes.data
-    console.log('Ответ от сервера:', grains)
-    console.log('grains.data:', grains.data)
-}
+    try {
+        const grainsRes = await api.get('/grain-types')
+        const vehiclesRes = await api.get('/vehicles')
+        const driversRes = await api.get('/drivers')
 
+        grainTypes.value = grainsRes.data
+        vehicles.value = vehiclesRes.data
+        drivers.value = driversRes.data
+    } catch (err) {
+        console.error('Ошибка при загрузке данных:', err)
+    }
+}
 watch(() => props.show, (val) => {
     if (val) {
         loadOptions()
@@ -62,7 +63,9 @@ const submit = async () => {
         error.value = err.response?.data?.message || 'Ошибка при сохранении'
     }
 }
-
+onMounted(() => {
+  loadOptions()
+})
 </script>
 
 <template>
@@ -72,7 +75,6 @@ const submit = async () => {
                 <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
                     @click="$emit('close')">✖</button>
                 <h2 class="text-xl font-bold mb-4">Добавить поставку</h2>
-
                 <div class="space-y-4">
                     <select v-model="form.grain_type_id" class="w-full border rounded px-4 py-2">
                         <option disabled value="">Выберите культуру</option>

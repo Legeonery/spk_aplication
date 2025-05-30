@@ -8,6 +8,6 @@ class VehicleController extends Controller
 {
     public function index()
     {
-        return Vehicle::all();
+        return response()->json(Vehicle::all());
     }
 }

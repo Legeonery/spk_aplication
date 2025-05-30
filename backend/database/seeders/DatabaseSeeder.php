@@ -21,6 +21,8 @@ class DatabaseSeeder extends Seeder
         ]);
         $this->call([
             GrainTypesSeeder::class,
+            DriversSeeder::class,
+            VehiclesSeeder::class,
         ]);
     }
 }

@@ -8,6 +8,6 @@ class DriverController extends Controller
 {
     public function index()
     {
-        return Driver::all();
+        return response()->json(data: Driver::all());
     }
 }
