@@ -1,9 +1,19 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, defineProps } from 'vue'
+import EditGrainDelivery from '@/components/EditGrainDelivery.vue'
+
+const showEditDeliveryModal = ref(false)
+const selectedDelivery = ref(null)
+
+function editDelivery(delivery) {
+  selectedDelivery.value = delivery
+  showEditDeliveryModal.value = true
+}
 
 const props = defineProps({
   deliveries: Array,
-  grains: Array
+  grains: Array,
+  highlightId: [Number, null]
 })
 
 const filter = ref({
@@ -53,15 +63,8 @@ watch([filter], () => {
 <template>
   <div class="bg-white rounded-xl shadow p-4 border">
     <div class="flex flex-wrap gap-4 mb-4">
-      <input
-        type="date"
-        v-model="filter.date"
-        class="border px-4 py-2 rounded w-full sm:w-auto"
-      />
-      <select
-        v-model="filter.grainTypeId"
-        class="border px-4 py-2 rounded w-full sm:w-auto"
-      >
+      <input type="date" v-model="filter.date" class="border px-4 py-2 rounded w-full sm:w-auto" />
+      <select v-model="filter.grainTypeId" class="border px-4 py-2 rounded w-full sm:w-auto">
         <option value="">Все культуры</option>
         <option v-for="g in grains" :key="g.grain_type.id" :value="g.grain_type.id">
           {{ g.grain_type.name }}
@@ -70,29 +73,28 @@ watch([filter], () => {
     </div>
 
     <transition name="fade" mode="out-in">
-      <table
-        v-if="paginatedDeliveries.length"
-        key="table"
-        class="w-full text-sm border border-gray-200 rounded overflow-hidden shadow-sm"
-      >
+      <table v-if="paginatedDeliveries.length" key="table"
+        class="w-full text-sm border border-gray-200 rounded overflow-hidden shadow-sm">
         <thead class="bg-blue-50 text-left">
           <tr>
             <th class="px-4 py-3 font-semibold">Дата</th>
             <th class="px-4 py-3 font-semibold">Культура</th>
             <th class="px-4 py-3 font-semibold">Объём (т)</th>
             <th class="px-4 py-3 font-semibold">Водитель</th>
+            <th class="px-4 py-3 font-semibold">Действия</th>
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="d in paginatedDeliveries"
-            :key="d.id"
-            class="hover:bg-blue-50 transition-colors border-t"
-          >
+          <tr v-for="d in paginatedDeliveries" :key="d.id" class="hover:bg-blue-50 transition-colors border-t">
             <td class="px-4 py-2">{{ d.delivery_date }}</td>
             <td class="px-4 py-2">{{ d.grain_type?.name ?? '—' }}</td>
             <td class="px-4 py-2">{{ d.volume }}</td>
             <td class="px-4 py-2">{{ d.driver?.name ?? '—' }}</td>
+            <td class="px-4 py-2">
+              <button @click="editDelivery(d)" class="text-blue-600 hover:underline text-sm" title="Редактировать">
+                ✏️
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -100,21 +102,19 @@ watch([filter], () => {
     </transition>
 
     <div v-if="totalPages > 1" class="flex justify-center items-center gap-2 mt-6 flex-wrap">
-      <button
-        v-for="page in visiblePages"
-        :key="page"
-        @click="currentPage = page"
-        :class="[
-          'px-3 py-1 rounded border text-sm',
-          page === currentPage
-            ? 'bg-blue-600 text-white border-blue-600'
-            : 'bg-white text-gray-700 hover:bg-blue-100 border-gray-300'
-        ]"
-      >
+      <button v-for="page in visiblePages" :key="page" @click="currentPage = page" :class="[
+        'px-3 py-1 rounded border text-sm',
+        page === currentPage
+          ? 'bg-blue-600 text-white border-blue-600'
+          : 'bg-white text-gray-700 hover:bg-blue-100 border-gray-300'
+      ]">
         {{ page }}
       </button>
     </div>
   </div>
+  <EditGrainDelivery v-if="selectedDelivery" :key="selectedDelivery.id" :delivery="selectedDelivery"
+    :show="showEditDeliveryModal" @close="showEditDeliveryModal = false"
+    @success="() => { showEditDeliveryModal = false; $emit('refresh') }" />
 </template>
 
 <style scoped>
@@ -122,6 +122,7 @@ watch([filter], () => {
 .fade-leave-active {
   transition: all 0.25s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;

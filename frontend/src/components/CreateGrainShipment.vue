@@ -1,7 +1,6 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import api from '@/services/api'
-import { onMounted } from 'vue'
 
 const props = defineProps({
     warehouseId: Number,
@@ -13,7 +12,7 @@ const emit = defineEmits(['close', 'success'])
 const form = ref({
     grain_type_id: '',
     volume: '',
-    delivery_date: '',
+    shipment_date: new Date().toISOString().split('T')[0],
     vehicle_id: '',
     driver_id: ''
 })
@@ -25,24 +24,26 @@ const error = ref('')
 
 const loadOptions = async () => {
     try {
-        const grainsRes = await api.get('/grain-types')
-        const vehiclesRes = await api.get('/vehicles')
-        const driversRes = await api.get('/drivers')
-
-        grainTypes.value = grainsRes.data
+        const [grains, vehiclesRes, driversRes] = await Promise.all([
+            api.get('/grain-types'),
+            api.get('/vehicles'),
+            api.get('/drivers')
+        ])
+        grainTypes.value = grains.data
         vehicles.value = vehiclesRes.data
         drivers.value = driversRes.data
     } catch (err) {
         console.error('Ошибка при загрузке данных:', err)
     }
 }
+
 watch(() => props.show, (val) => {
     if (val) {
         loadOptions()
         form.value = {
             grain_type_id: '',
             volume: '',
-            delivery_date: new Date().toISOString().split('T')[0],
+            shipment_date: new Date().toISOString().split('T')[0],
             vehicle_id: '',
             driver_id: ''
         }
@@ -53,7 +54,7 @@ watch(() => props.show, (val) => {
 const submit = async () => {
     error.value = ''
     try {
-        await api.post('/grain-deliveries', {
+        await api.post('/grain-shipments', {
             ...form.value,
             warehouse_id: props.warehouseId
         })
@@ -63,9 +64,6 @@ const submit = async () => {
         error.value = err.response?.data?.message || 'Ошибка при сохранении'
     }
 }
-onMounted(() => {
-    loadOptions()
-})
 </script>
 
 <template>
@@ -74,7 +72,8 @@ onMounted(() => {
             <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md relative animate-fade-in">
                 <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
                     @click="$emit('close')">✖</button>
-                <h2 class="text-xl font-bold mb-4">Добавить поставку</h2>
+                <h2 class="text-xl font-bold mb-4">Добавить отгрузку</h2>
+
                 <div class="space-y-4">
                     <select v-model="form.grain_type_id" class="w-full border rounded px-4 py-2">
                         <option disabled value="">Выберите культуру</option>
@@ -86,11 +85,11 @@ onMounted(() => {
                     <input v-model="form.volume" type="number" min="0" placeholder="Объём (т)"
                         class="w-full border rounded px-4 py-2" />
 
-                    <input v-model="form.delivery_date" type="date" class="w-full border rounded px-4 py-2" />
+                    <input v-model="form.shipment_date" type="date" class="w-full border rounded px-4 py-2" />
 
                     <select v-model="form.vehicle_id" class="w-full border rounded px-4 py-2">
                         <option disabled value="">Выберите транспорт</option>
-                        <option v-for="v in vehicles.filter(v => v.type === 'привоз' || v.type === 'универсальный')"
+                        <option v-for="v in vehicles.filter(v => v.type === 'отгрузка' || v.type === 'универсальный')"
                             :key="v.id" :value="v.id">
                             {{ v.number }} ({{ v.type }})
                         </option>

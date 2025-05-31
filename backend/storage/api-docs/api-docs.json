@@ -1236,6 +1236,267 @@
                     }
                 ]
             }
+        },
+        "/api/grain-deliveries/{delivery}": {
+            "put": {
+                "tags": [
+                    "GrainDeliveries"
+                ],
+                "summary": "Обновление поставки зерна",
+                "operationId": "b3c719acffe22cd6b193500a982cac92",
+                "parameters": [
+                    {
+                        "name": "delivery",
+                        "in": "path",
+                        "description": "ID поставки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "warehouse_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "grain_type_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "volume": {
+                                        "type": "number",
+                                        "example": 1400
+                                    },
+                                    "delivery_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-06-01"
+                                    },
+                                    "vehicle_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "driver_id": {
+                                        "type": "integer",
+                                        "example": 5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Поставка обновлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Поставка обновлена"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "volume": {
+                                                    "type": "number",
+                                                    "example": 1400
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "example": "2025-06-01T12:00:00Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/grain-shipments/{shipment}": {
+            "put": {
+                "tags": [
+                    "GrainShipments"
+                ],
+                "summary": "Обновление отгрузки зерна",
+                "operationId": "d3f9540903a74dc3174dea47d1efa8b5",
+                "parameters": [
+                    {
+                        "name": "shipment",
+                        "in": "path",
+                        "description": "ID отгрузки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "warehouse_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "grain_type_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "volume": {
+                                        "type": "number",
+                                        "example": 950
+                                    },
+                                    "shipment_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-06-17"
+                                    },
+                                    "vehicle_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "driver_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Отгрузка обновлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Отгрузка обновлена"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "volume": {
+                                                    "type": "number",
+                                                    "example": 950
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "example": "2025-06-01T12:00:00Z"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/grain-logs/{entityType}/{entityId}": {
+            "get": {
+                "tags": [
+                    "GrainLogs"
+                ],
+                "summary": "История изменений поставки или отгрузки",
+                "operationId": "6babee5c0e3f49dd61cbf2283a5a3e16",
+                "parameters": [
+                    {
+                        "name": "entityType",
+                        "in": "path",
+                        "required": true,
+                        "example": "shipment"
+                    },
+                    {
+                        "name": "entityId",
+                        "in": "path",
+                        "required": true,
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "История изменений",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "entity_type": {
+                                                "type": "string"
+                                            },
+                                            "entity_id": {
+                                                "type": "integer"
+                                            },
+                                            "changes": {
+                                                "type": "object"
+                                            },
+                                            "action": {
+                                                "type": "string",
+                                                "example": "updated"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "example": "2025-06-01T12:00:00Z"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -1266,6 +1527,10 @@
         {
             "name": "GrainShipments",
             "description": "GrainShipments"
+        },
+        {
+            "name": "GrainLogs",
+            "description": "GrainLogs"
         }
     ]
 }

@@ -5,9 +5,11 @@ import api from '@/services/api'
 import BarChart from '@/components/BarChart.vue'
 import CreateGrainDelivery from '@/components/CreateGrainDelivery.vue'
 import GrainDeliveryHistory from '@/components/GrainDeliveryHistory.vue'
+import CreateGrainShipment from '@/components/CreateGrainShipment.vue'
+import GrainShipmentHistory from '@/components/GrainShipmentHistory.vue'
 
+const showShipmentModal = ref(false)
 const showDeliveryModal = ref(false)
-
 const route = useRoute()
 const router = useRouter()
 
@@ -16,6 +18,11 @@ const grains = ref([])
 const deliveries = ref([])
 const shipments = ref([])
 const showEditModal = ref(false)
+const error = ref('')
+const toast = ref({ message: '', type: 'success', show: false })
+
+const lastEditedDeliveryId = ref(null)
+const lastEditedShipmentId = ref(null)
 
 const form = ref({
   name: '',
@@ -23,7 +30,11 @@ const form = ref({
   area: null,
   max_historical_load: null,
 })
-const error = ref('')
+
+const showToast = (message, type = 'success') => {
+  toast.value = { message, type, show: true }
+  setTimeout(() => toast.value.show = false, 3000)
+}
 
 const fetchWarehouse = async () => {
   try {
@@ -48,36 +59,46 @@ const fetchGrains = async () => {
 }
 
 const fetchDeliveries = async () => {
-  const res = await api.get(`/warehouses/${route.params.id}/deliveries`)
-  deliveries.value = res.data
+  try {
+    const res = await api.get(`/warehouses/${route.params.id}/deliveries`)
+    deliveries.value = res.data
+  } catch (err) {
+    console.error('Ошибка при загрузке поставок:', err)
+  }
 }
+
 const fetchShipments = async () => {
-  const res = await api.get(`/warehouses/${route.params.id}/shipments`)
-  shipments.value = res.data
+  try {
+    const res = await api.get(`/warehouses/${route.params.id}/shipments`)
+    shipments.value = res.data
+  } catch (err) {
+    console.error('Ошибка при загрузке отгрузок:', err)
+  }
 }
 
 const openEditModal = () => {
   Object.assign(form.value, warehouse.value)
   showEditModal.value = true
 }
+
 const closeEditModal = () => {
   showEditModal.value = false
 }
+
 const updateWarehouse = async () => {
   error.value = ''
   if (!form.value.name || !form.value.type) {
     error.value = 'Укажите имя и тип склада'
     return
   }
-
   if (form.value.type !== 'зерновой') {
     form.value.max_historical_load = null
   }
-
   try {
     const response = await api.put(`/warehouses/${route.params.id}`, form.value)
     warehouse.value = response.data.data
     showEditModal.value = false
+    showToast('Склад успешно обновлён ✅')
   } catch (err) {
     error.value = 'Ошибка при сохранении'
     console.error(err)
@@ -100,6 +121,7 @@ const downloadReport = async () => {
 }
 
 onMounted(fetchWarehouse)
+
 const deliveryChartData = computed(() => ({
   labels: deliveries.value.map(d => d.delivery_date),
   datasets: [
@@ -119,8 +141,8 @@ const chartOptions = {
     title: { display: true, text: 'Объём поставок по датам' }
   }
 }
-const activeTab = ref('grains')
 
+const activeTab = ref('grains')
 const tabs = [
   { key: 'grains', label: '🌾 Остатки' },
   { key: 'deliveries', label: '🚚 Поставки' },
@@ -134,8 +156,7 @@ const tabs = [
     <h1 class="text-2xl font-bold mb-4">Информация о складе</h1>
 
     <div v-if="warehouse" class="bg-white rounded-xl shadow-md p-6 space-y-6 border">
-      <h2 class="text-2xl font-semibold text-gray-800">Информация о складе</h2>
-
+      <!-- Склад и кнопки -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
         <p><strong>Наименование:</strong> {{ warehouse.name }}</p>
         <p><strong>Тип:</strong> {{ warehouse.type }}</p>
@@ -145,82 +166,83 @@ const tabs = [
 
       <div class="flex flex-wrap gap-3 mt-2">
         <button @click="openEditModal"
-          class="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded text-white font-medium">
-          ✏️ Редактировать
-        </button>
-        <button @click="deleteWarehouse" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white font-medium">
-          🗑️ Удалить
-        </button>
+          class="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded text-white font-medium">✏️ Редактировать</button>
+        <button @click="deleteWarehouse"
+          class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white font-medium">🗑️ Удалить</button>
+        <button @click="showDeliveryModal = true"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium shadow">➕ Добавить
+          поставку</button>
+        <button @click="showShipmentModal = true"
+          class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded font-medium shadow">➕ Добавить
+          отгрузку</button>
         <button @click="downloadReport"
-          class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-medium">
-          📄 Выгрузить отчёт
-        </button>
+          class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-medium">📄 Выгрузить отчёт</button>
       </div>
 
       <!-- Вкладки -->
       <div class="flex flex-wrap gap-2 border-b mt-6">
         <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key" :class="[
           'px-4 py-2 text-sm font-medium rounded-t-md transition',
-          activeTab === tab.key
-            ? 'bg-blue-600 text-white'
-            : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
-        ]">
-          {{ tab.label }}
-        </button>
+          activeTab === tab.key ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+        ]">{{ tab.label }}</button>
       </div>
 
-      <!-- Контент вкладок -->
       <div class="pt-4 space-y-6">
-        <!-- Остатки -->
         <div v-if="activeTab === 'grains'">
-          <div class="text-gray-700 space-y-1" v-if="grains.length">
-            <h3 class="text-lg font-semibold mb-2">Остатки по культурам</h3>
-            <ul class="list-disc list-inside">
-              <li v-for="grain in grains" :key="grain.id">
-                {{ grain.grain_type.name }} — {{ grain.amount }} т
-              </li>
-            </ul>
+          <div class="rounded-xl border shadow-sm overflow-hidden">
+            <table class="w-full text-sm text-left border-separate border-spacing-y-1">
+              <thead class="bg-gray-50 text-gray-700 text-sm uppercase tracking-wider">
+                <tr>
+                  <th class="px-4 py-3">Культура</th>
+                  <th class="px-4 py-3 text-right">Остаток (т)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="grain in [...grains].sort((a, b) => a.grain_type.name.localeCompare(b.grain_type.name))"
+                  :key="grain.id" class="bg-white hover:bg-blue-50 transition-all">
+                  <td class="px-4 py-2 font-medium text-gray-900">{{ grain.grain_type.name }}</td>
+                  <td class="px-4 py-2 text-right text-gray-700">{{ grain.amount }}</td>
+                </tr>
+              </tbody>
+              <tfoot v-if="grains.length">
+                <tr class="bg-gray-100 border-t">
+                  <td class="px-4 py-2 font-semibold text-right">Общий объём:</td>
+                  <td class="px-4 py-2 text-right font-bold text-blue-600">
+                    {{grains.reduce((sum, g) => sum + (parseFloat(g.amount) || 0), 0).toFixed(2)}} т
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
           </div>
-          <div v-else class="text-gray-500">Нет данных по остаткам.</div>
+          <p v-if="!grains.length" class="text-gray-500 mt-4 text-center">Нет данных по остаткам.</p>
         </div>
-
-        <!-- Поставки -->
         <div v-if="activeTab === 'deliveries'">
-          <div class="flex justify-between items-center mb-3">
-            <h3 class="text-lg font-semibold">История поставок</h3>
-            <button @click="showDeliveryModal = true"
-              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium shadow">
-              ➕ Добавить поставку
-            </button>
-          </div>
-          <GrainDeliveryHistory :deliveries="deliveries" :grains="grains" />
+          <GrainDeliveryHistory :deliveries="deliveries" :grains="grains" :highlight-id="lastEditedDeliveryId"
+            @refresh="fetchDeliveries" />
         </div>
-
-        <!-- Отгрузки -->
         <div v-if="activeTab === 'shipments'">
-          <h3 class="text-lg font-semibold mb-2">История отгрузок</h3>
-          <ul class="text-gray-700 space-y-1" v-if="shipments.length">
-            <li v-for="s in shipments" :key="s.id">
-              {{ s.shipment_date }} — {{ s.grain_type }} — {{ s.volume }} т ({{ s.driver?.name ?? 'Без водителя' }})
-            </li>
-          </ul>
-          <div v-else class="text-gray-500">Нет данных по отгрузкам.</div>
+          <GrainShipmentHistory :shipments="shipments" :grains="grains" :highlight-id="lastEditedShipmentId"
+            @refresh="fetchShipments" />
         </div>
-
-        <!-- Диаграмма -->
         <div v-if="activeTab === 'chart'">
-          <h3 class="text-lg font-semibold mb-2">Диаграмма объёма поставок</h3>
-          <div class="h-[300px] w-full">
-            <BarChart :chart-data="deliveryChartData" :chart-options="chartOptions" />
-          </div>
+          <BarChart :chart-data="deliveryChartData" :chart-options="chartOptions" class="h-[300px] w-full" />
         </div>
       </div>
     </div>
+    <CreateGrainDelivery :warehouse-id="warehouse?.id" :show="showDeliveryModal" @close="showDeliveryModal = false"
+      @success="() => {
+        showDeliveryModal = false
+        fetchDeliveries()
+        fetchGrains()
+      }" />
 
-    <div v-else>
-      <p>Загрузка данных...</p>
-    </div>
-
+    <CreateGrainShipment :warehouse-id="warehouse?.id" :show="showShipmentModal" @close="showShipmentModal = false"
+      @success="() => {
+        showShipmentModal = false
+        fetchShipments()
+        fetchGrains()
+      }" />
+    <!-- TOAST -->
     <transition name="fade">
       <div v-if="showEditModal"
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -251,11 +273,6 @@ const tabs = [
         </div>
       </div>
     </transition>
-    {{ console.log('Проверка ID склада:', warehouse?.id) }}
-    <Suspense>
-      <CreateGrainDelivery :warehouse-id="warehouse?.id" :show="showDeliveryModal" @close="showDeliveryModal = false"
-        @success="fetchDeliveries" />
-    </Suspense>
   </div>
 </template>
 

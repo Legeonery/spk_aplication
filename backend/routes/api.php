@@ -8,6 +8,7 @@ use App\Http\Controllers\GrainDeliveryController;
 use App\Http\Controllers\GrainShipmentController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\GrainController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,7 @@ Route::resource('warehouses', WarehousesController::class)->middleware('jwt.auth
 
 
 Route::middleware('jwt.auth')->group(function () {
+    Route::post('/grain-shipments', [GrainShipmentController::class, 'store']);
     Route::get('/warehouses/{warehouse}/grains', [WarehousesController::class, 'grains']);
     Route::post('/grain-deliveries', [GrainDeliveryController::class, 'store']);
     Route::get('/grain-types', [GrainTypesController::class, 'index']);
@@ -35,4 +37,8 @@ Route::middleware('jwt.auth')->group(function () {
     Route::get('/warehouses/{warehouse}/shipments', [GrainShipmentController::class, 'byWarehouse']);
     Route::get('/drivers', [DriverController::class, 'index']);
     Route::get('/vehicles', [VehicleController::class, 'index']);
+    Route::put('/grain-deliveries/{id}', [GrainDeliveryController::class, 'update']);
+    Route::put('/grain-shipments/{id}', [GrainShipmentController::class, 'update']);
+    Route::get('/warehouses/{warehouse}/grains', [GrainController::class, 'getWarehouseGrains']);
+
 });

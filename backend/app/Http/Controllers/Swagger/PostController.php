@@ -491,7 +491,105 @@ use App\Http\Controllers\Controller;
  *         )
  *     )
  * )
+ * 
+ * @OA\Put(
+ *     path="/api/grain-deliveries/{delivery}",
+ *     summary="Обновление поставки зерна",
+ *     tags={"GrainDeliveries"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="delivery",
+ *         in="path",
+ *         description="ID поставки",
+ *         required=true,
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             @OA\Property(property="warehouse_id", type="integer", example=1),
+ *             @OA\Property(property="grain_type_id", type="integer", example=2),
+ *             @OA\Property(property="volume", type="number", example=1400),
+ *             @OA\Property(property="delivery_date", type="string", format="date", example="2025-06-01"),
+ *             @OA\Property(property="vehicle_id", type="integer", example=3),
+ *             @OA\Property(property="driver_id", type="integer", example=5)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Поставка обновлена",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Поставка обновлена"),
+ *             @OA\Property(property="data", type="object",
+ *                 @OA\Property(property="id", type="integer", example=1),
+ *                 @OA\Property(property="volume", type="number", example=1400),
+ *                 @OA\Property(property="updated_at", type="string", example="2025-06-01T12:00:00Z")
+ *             )
+ *         )
+ *     )
+ * )
+ * @OA\Put(
+ *     path="/api/grain-shipments/{shipment}",
+ *     summary="Обновление отгрузки зерна",
+ *     tags={"GrainShipments"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="shipment",
+ *         in="path",
+ *         description="ID отгрузки",
+ *         required=true,
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             @OA\Property(property="warehouse_id", type="integer", example=1),
+ *             @OA\Property(property="grain_type_id", type="integer", example=2),
+ *             @OA\Property(property="volume", type="number", example=950),
+ *             @OA\Property(property="shipment_date", type="string", format="date", example="2025-06-17"),
+ *             @OA\Property(property="vehicle_id", type="integer", example=1),
+ *             @OA\Property(property="driver_id", type="integer", example=3)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Отгрузка обновлена",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Отгрузка обновлена"),
+ *             @OA\Property(property="data", type="object",
+ *                 @OA\Property(property="id", type="integer", example=1),
+ *                 @OA\Property(property="volume", type="number", example=950),
+ *                 @OA\Property(property="updated_at", type="string", example="2025-06-01T12:00:00Z")
+ *             )
+ *         )
+ *     )
+ * )
+ * 
+ * @OA\Get(
+ *     path="/api/grain-logs/{entityType}/{entityId}",
+ *     summary="История изменений поставки или отгрузки",
+ *     tags={"GrainLogs"},
+ *     security={{"bearerAuth": {}}},
+ *     @OA\Parameter(name="entityType", in="path", required=true, example="shipment"),
+ *     @OA\Parameter(name="entityId", in="path", required=true, example=1),
+ *     @OA\Response(
+ *         response=200,
+ *         description="История изменений",
+ *         @OA\JsonContent(
+ *             type="array",
+ *             @OA\Items(
+ *                 @OA\Property(property="id", type="integer"),
+ *                 @OA\Property(property="entity_type", type="string"),
+ *                 @OA\Property(property="entity_id", type="integer"),
+ *                 @OA\Property(property="changes", type="object"),
+ *                 @OA\Property(property="action", type="string", example="updated"),
+ *                 @OA\Property(property="created_at", type="string", example="2025-06-01T12:00:00Z")
+ *             )
+ *         )
+ *     )
+ * )
  */
+ 
 class PostController extends Controller
 {
 }
