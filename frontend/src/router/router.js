@@ -4,6 +4,7 @@ import Transport from '../views/Transport.vue'
 import LoginView from '@/views/LoginView.vue'
 import MainLayout from '@/layouts/MainLayout.vue' // 👈 наш layout
 import WarehousePage from '@/views/WarehousePage.vue'
+import WarehouseSparePartsPage from '@/views/WarehouseSparePartsPage.vue'
 
 const routes = [
   {
@@ -15,6 +16,10 @@ const routes = [
       { path: 'warehouse', component: Warehouse },
       { path: 'transport', component: Transport },
       { path: 'warehouse/:id', component: WarehousePage },
+      {
+        path: '/warehouse-spare-parts/:id',
+        component: WarehouseSparePartsPage,
+      },
     ],
   },
   { path: '/login', component: LoginView },

@@ -23,4 +23,17 @@ class Vehicle extends Model
     {
         return $this->belongsTo(Driver::class);
     }
+
+    // 🔧 Связь с использованием запчастей
+    public function sparePartLinks()
+    {
+        return $this->hasMany(SparePartVehicleLink::class, 'vehicle_id');
+    }
+
+    public function usedSpareParts()
+    {
+        return $this->belongsToMany(SparePart::class, 'spare_part_vehicle_links')
+            ->withPivot(['used_at', 'note'])
+            ->withTimestamps();
+    }
 }

@@ -490,7 +490,7 @@ use App\Http\Controllers\Controller;
  *             @OA\Property(property="message", type="string", example="Отгрузка добавлена"),
  *         )
  *     )
- * )
+ * ),
  * 
  * @OA\Put(
  *     path="/api/grain-deliveries/{delivery}",
@@ -527,7 +527,7 @@ use App\Http\Controllers\Controller;
  *             )
  *         )
  *     )
- * )
+ * ),
  * @OA\Put(
  *     path="/api/grain-shipments/{shipment}",
  *     summary="Обновление отгрузки зерна",
@@ -563,7 +563,7 @@ use App\Http\Controllers\Controller;
  *             )
  *         )
  *     )
- * )
+ * ),
  * 
  * @OA\Get(
  *     path="/api/grain-logs/{entityType}/{entityId}",
@@ -587,37 +587,97 @@ use App\Http\Controllers\Controller;
  *             )
  *         )
  *     )
- * )
+ * ),
  * @OA\Get(
- *     path = "/api/warehouses/{warehouse}/report",
- *     summary = "Выгрузка PDF-отчёта по складу",
- *     tags = { "WarehousesPost" },
- *     security = {{ "bearerAuth": {} }},
+ *     path="/api/warehouses/{warehouse}/spare-parts",
+ *     summary="Получение всех движений запчастей по складу",
+ *     tags={"SpareParts"},
+ *     security={{"bearerAuth":{}}},
  *     @OA\Parameter(
- *         name = "warehouse",
- *         in = "path",
- *         description = "ID склада",
- *         required = true,
- *         @OA\Schema(type = "integer", example = 1)
+ *         name="warehouse",
+ *         in="path",
+ *         required=true,
+ *         description="ID склада",
+ *         @OA\Schema(type="integer", example=1)
  *     ),
  *     @OA\Response(
- *         response = 200,
- *         description = "PDF-отчёт",
- *         @OA\Content(
- *             mediaType = "application/pdf",
- *             schema = @OA\Schema(type = "string", format = "binary")
+ *         response=200,
+ *         description="Успешно",
+ *         @OA\JsonContent(type="array", @OA\Items(
+ *             @OA\Property(property="id", type="integer", example=1),
+ *             @OA\Property(property="spare_part_id", type="integer", example=2),
+ *             @OA\Property(property="quantity", type="number", example=10),
+ *             @OA\Property(property="type", type="string", enum={"in", "out"}, example="in"),
+ *             @OA\Property(property="date", type="string", format="date", example="2025-06-02"),
+ *             @OA\Property(property="reason", type="string", example="Для ремонта двигателя")
+ *         ))
+ *     )
+ * ),
+ *
+ * @OA\Post(
+ *     path="/api/warehouses/{warehouse}/spare-parts/deliveries",
+ *     summary="Добавление поступления запчастей",
+ *     tags={"SpareParts"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="warehouse",
+ *         in="path",
+ *         required=true,
+ *         description="ID склада",
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             @OA\Property(property="name", type="string", example="Фильтр масляный"),
+ *             @OA\Property(property="article", type="string", example="MF1234"),
+ *             @OA\Property(property="quantity", type="number", example=15),
+ *             @OA\Property(property="date", type="string", format="date", example="2025-06-02")
  *         )
  *     ),
  *     @OA\Response(
- *         response = 404,
- *         description = "Склад не найден",
+ *         response=201,
+ *         description="Поступление добавлено",
  *         @OA\JsonContent(
- *             @OA\Property(property = "message", type = "string", example = "Not Found")
+ *             @OA\Property(property="id", type="integer", example=1),
+ *             @OA\Property(property="type", type="string", example="in")
+ *         )
+ *     )
+ * ),
+ *
+ * @OA\Post(
+ *     path="/api/warehouses/{warehouse}/spare-parts/usages",
+ *     summary="Списание запчастей",
+ *     tags={"SpareParts"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="warehouse",
+ *         in="path",
+ *         required=true,
+ *         description="ID склада",
+ *         @OA\Schema(type="integer", example=1)
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             @OA\Property(property="name", type="string", example="Фильтр масляный"),
+ *             @OA\Property(property="article", type="string", example="MF1234"),
+ *             @OA\Property(property="quantity", type="number", example=3),
+ *             @OA\Property(property="date", type="string", format="date", example="2025-06-02"),
+ *             @OA\Property(property="reason", type="string", example="Замена на тракторе Т-150")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Списание выполнено",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="id", type="integer", example=10),
+ *             @OA\Property(property="type", type="string", example="out")
  *         )
  *     )
  * )
  */
- 
+
 class PostController extends Controller
 {
 }

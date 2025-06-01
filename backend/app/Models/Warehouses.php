@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Warehouses extends Model
 {
     protected $guarded = false;
+
+    // Зерновые
     public function warehouseGrains()
     {
-        return $this->hasMany(\App\Models\WarehouseGrains::class, 'warehouse_id');
+        return $this->hasMany(WarehouseGrains::class, 'warehouse_id');
     }
+
     public function grains()
     {
         return $this->hasMany(WarehouseGrains::class, 'warehouse_id');
@@ -24,5 +27,23 @@ class Warehouses extends Model
     public function grainShipments()
     {
         return $this->hasMany(GrainShipment::class, 'warehouse_id');
+    }
+
+    // 🔧 Запчасти
+    public function spareParts()
+    {
+        return $this->hasMany(WarehouseSparePart::class, 'warehouse_id');
+    }
+
+    public function sparePartDeliveries()
+    {
+        return $this->hasMany(SparePartMovement::class, 'warehouse_id')
+            ->where('type', 'in');
+    }
+
+    public function sparePartUsages()
+    {
+        return $this->hasMany(SparePartMovement::class, 'warehouse_id')
+            ->where('type', 'out');
     }
 }
