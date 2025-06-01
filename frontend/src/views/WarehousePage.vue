@@ -122,23 +122,89 @@ const downloadReport = async () => {
 
 onMounted(fetchWarehouse)
 
-const deliveryChartData = computed(() => ({
-  labels: deliveries.value.map(d => d.delivery_date),
-  datasets: [
-    {
-      label: 'Поставки (т)',
-      backgroundColor: '#36A2EB',
-      data: deliveries.value.map(d => d.volume)
-    }
-  ]
-}))
+const deliveryChartData = computed(() => {
+  const cultureMap = new Map()
 
+  // Собираем все культуры
+  grains.value.forEach(g => {
+    cultureMap.set(g.grain_type.id, g.grain_type.name)
+  })
+
+  const dateSet = new Set()
+  const cultureIds = Array.from(cultureMap.keys())
+
+  const dataMap = {}
+
+  // Инициализируем структуру
+  cultureIds.forEach(id => {
+    dataMap[id] = { delivery: {}, shipment: {} }
+  })
+
+  // Заполняем поставки
+  deliveries.value.forEach(d => {
+    const date = d.delivery_date
+    dateSet.add(date)
+    if (!dataMap[d.grain_type_id].delivery[date]) dataMap[d.grain_type_id].delivery[date] = 0
+    dataMap[d.grain_type_id].delivery[date] += d.volume
+  })
+
+  // Заполняем отгрузки
+  shipments.value.forEach(s => {
+    const date = s.shipment_date
+    dateSet.add(date)
+    if (!dataMap[s.grain_type_id].shipment[date]) dataMap[s.grain_type_id].shipment[date] = 0
+    dataMap[s.grain_type_id].shipment[date] += s.volume
+  })
+
+  const allDates = Array.from(dateSet).sort()
+
+  const datasets = []
+
+  for (const [id, name] of cultureMap.entries()) {
+    // Поставка
+    datasets.push({
+      label: `${name} — Поставка`,
+      backgroundColor: getColor(name, 'delivery'),
+      data: allDates.map(d => dataMap[id].delivery[d] || 0)
+    })
+
+    // Отгрузка
+    datasets.push({
+      label: `${name} — Отгрузка`,
+      backgroundColor: getColor(name, 'shipment'),
+      data: allDates.map(d => dataMap[id].shipment[d] || 0)
+    })
+  }
+
+  return {
+    labels: allDates,
+    datasets
+  }
+})
+
+function getColor(name, type) {
+  const baseColors = {
+    Пшеница: '#36A2EB',
+    Кукуруза: '#F87171',
+    Ячмень: '#10B981',
+    Овёс: '#F59E0B'
+  }
+
+  const shade = type === 'shipment' ? '80' : 'CC' // Более прозрачный цвет для отгрузки
+  const hex = baseColors[name] || '#A78BFA'
+  return hex + shade
+}
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
+  interaction: { mode: 'index', intersect: false },
   plugins: {
-    legend: { position: 'top' },
-    title: { display: true, text: 'Объём поставок по датам' }
+    legend: { position: 'bottom' },
+    title: { display: true, text: 'Поставки и отгрузки по культурам и датам' }
+  },
+  scales: {
+    x: { stacked: false, title: { display: true, text: 'Дата' } },
+    y: { stacked: false, beginAtZero: true, title: { display: true, text: 'Объём (т)' } }
   }
 }
 

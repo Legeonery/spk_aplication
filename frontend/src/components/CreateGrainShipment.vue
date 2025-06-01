@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import api from '@/services/api'
 
 const props = defineProps({
@@ -18,20 +18,23 @@ const form = ref({
 })
 
 const grainTypes = ref([])
+const grains = ref([]) // Остатки
 const vehicles = ref([])
 const drivers = ref([])
 const error = ref('')
 
 const loadOptions = async () => {
     try {
-        const [grains, vehiclesRes, driversRes] = await Promise.all([
+        const [typesRes, vehiclesRes, driversRes, stockRes] = await Promise.all([
             api.get('/grain-types'),
             api.get('/vehicles'),
-            api.get('/drivers')
+            api.get('/drivers'),
+            api.get(`/warehouses/${props.warehouseId}/grains`)
         ])
-        grainTypes.value = grains.data
+        grainTypes.value = typesRes.data
         vehicles.value = vehiclesRes.data
         drivers.value = driversRes.data
+        grains.value = stockRes.data
     } catch (err) {
         console.error('Ошибка при загрузке данных:', err)
     }
@@ -51,8 +54,23 @@ watch(() => props.show, (val) => {
     }
 })
 
-const submit = async () => {
+function validateVolume() {
+    const grain = grains.value.find(g => g.grain_type.id === parseInt(form.value.grain_type_id))
+    const available = grain?.amount ?? 0
+    const requested = parseFloat(form.value.volume || 0)
+
+    if (requested > available) {
+        error.value = `Недостаточно зерна на складе. Остаток: ${available} т`
+        return false
+    }
+
     error.value = ''
+    return true
+}
+
+const submit = async () => {
+    if (!validateVolume()) return
+
     try {
         await api.post('/grain-shipments', {
             ...form.value,
@@ -82,7 +100,7 @@ const submit = async () => {
                         </option>
                     </select>
 
-                    <input v-model="form.volume" type="number" min="0" placeholder="Объём (т)"
+                    <input v-model="form.volume" @blur="validateVolume" type="number" min="0" placeholder="Объём (т)"
                         class="w-full border rounded px-4 py-2" />
 
                     <input v-model="form.shipment_date" type="date" class="w-full border rounded px-4 py-2" />

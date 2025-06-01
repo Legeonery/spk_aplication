@@ -9,6 +9,7 @@ use App\Http\Controllers\GrainShipmentController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\GrainController;
+use App\Http\Controllers\WarehouseReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,5 +41,5 @@ Route::middleware('jwt.auth')->group(function () {
     Route::put('/grain-deliveries/{id}', [GrainDeliveryController::class, 'update']);
     Route::put('/grain-shipments/{id}', [GrainShipmentController::class, 'update']);
     Route::get('/warehouses/{warehouse}/grains', [GrainController::class, 'getWarehouseGrains']);
-
+    Route::get('/warehouses/{id}/report', [WarehouseReportController::class, 'generate']);
 });

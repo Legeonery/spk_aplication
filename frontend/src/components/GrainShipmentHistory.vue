@@ -118,8 +118,10 @@ function editShipment(shipment) {
 
     <!-- Модалка редактирования -->
     <EditGrainShipment v-if="selectedShipment" :key="selectedShipment.id" :shipment="selectedShipment"
-        :show="showEditShipmentModal" @close="showEditShipmentModal = false"
-        @success="() => { showEditShipmentModal = false; emit('refresh') }" />
+        :show="showEditShipmentModal" :grains="grains" @close="showEditShipmentModal = false" @success="() => {
+            showEditShipmentModal = false
+            emit('refresh')
+        }" /> 
 </template>
 
 <style scoped>

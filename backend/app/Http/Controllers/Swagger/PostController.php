@@ -588,6 +588,34 @@ use App\Http\Controllers\Controller;
  *         )
  *     )
  * )
+ * @OA\Get(
+ *     path = "/api/warehouses/{warehouse}/report",
+ *     summary = "Выгрузка PDF-отчёта по складу",
+ *     tags = { "WarehousesPost" },
+ *     security = {{ "bearerAuth": {} }},
+ *     @OA\Parameter(
+ *         name = "warehouse",
+ *         in = "path",
+ *         description = "ID склада",
+ *         required = true,
+ *         @OA\Schema(type = "integer", example = 1)
+ *     ),
+ *     @OA\Response(
+ *         response = 200,
+ *         description = "PDF-отчёт",
+ *         @OA\Content(
+ *             mediaType = "application/pdf",
+ *             schema = @OA\Schema(type = "string", format = "binary")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response = 404,
+ *         description = "Склад не найден",
+ *         @OA\JsonContent(
+ *             @OA\Property(property = "message", type = "string", example = "Not Found")
+ *         )
+ *     )
+ * )
  */
  
 class PostController extends Controller
