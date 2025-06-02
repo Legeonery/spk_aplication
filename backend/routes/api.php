@@ -14,6 +14,7 @@ use App\Http\Controllers\SparePartController;
 use App\Http\Controllers\SparePartMovementController;
 use App\Http\Controllers\SparePartDeliveryController;
 use App\Http\Controllers\SparePartUsageController;
+use App\Http\Controllers\SparePartReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -51,7 +52,7 @@ Route::middleware('jwt.auth')->group(function () {
     Route::put('/spare-parts/{sparePart}', [SparePartController::class, 'update']);
     Route::delete('/spare-parts/{sparePart}', [SparePartController::class, 'destroy']);
 
-    Route::get('/warehouses/{warehouse}/spare-parts', [SparePartMovementController::class, 'index']);
+    Route::get('/warehouses/{warehouse}/spare-parts/history', [SparePartMovementController::class, 'index']);
     Route::post('/warehouses/{warehouse}/spare-parts/deliveries', function ($warehouseId, Request $request) {
         return app(SparePartMovementController::class)->store($request->merge(['type' => 'in']), $warehouseId);
     });
@@ -61,4 +62,6 @@ Route::middleware('jwt.auth')->group(function () {
     Route::get('/warehouses/{warehouse}/spare-parts/deliveries', [SparePartDeliveryController::class, 'index']);
     Route::get('/warehouses/{warehouse}/spare-parts/usages', [SparePartUsageController::class, 'index']);
     Route::get('/warehouses/{warehouse}/spare-parts', [SparePartMovementController::class, 'getStock']);
+    Route::get('/warehouses/{warehouse}/spare-parts/report', [SparePartReportController::class, 'generate']);
+
 });

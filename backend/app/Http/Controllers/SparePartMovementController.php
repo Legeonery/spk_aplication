@@ -9,12 +9,6 @@ use Illuminate\Http\Request;
 
 class SparePartMovementController extends Controller
 {
-    public function index(Request $request, $warehouseId)
-    {
-        return SparePartMovement::where('warehouse_id', $warehouseId)
-            ->orderBy('date', 'desc')
-            ->get();
-    }
 
     public function store(Request $request, $warehouseId)
     {

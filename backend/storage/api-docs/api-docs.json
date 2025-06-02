@@ -1497,6 +1497,236 @@
                     }
                 ]
             }
+        },
+        "/api/warehouses/{warehouse}/spare-parts": {
+            "get": {
+                "tags": [
+                    "SpareParts"
+                ],
+                "summary": "Получение всех движений запчастей по складу",
+                "operationId": "740b441bf37d7b41b6ed8d525c0a02ba",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "ID склада",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "spare_part_id": {
+                                                "type": "integer",
+                                                "example": 2
+                                            },
+                                            "quantity": {
+                                                "type": "number",
+                                                "example": 10
+                                            },
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "in",
+                                                    "out"
+                                                ],
+                                                "example": "in"
+                                            },
+                                            "date": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2025-06-02"
+                                            },
+                                            "reason": {
+                                                "type": "string",
+                                                "example": "Для ремонта двигателя"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/warehouses/{warehouse}/spare-parts/deliveries": {
+            "post": {
+                "tags": [
+                    "SpareParts"
+                ],
+                "summary": "Добавление поступления запчастей",
+                "operationId": "d4a59a271598d2ea27d9b1bd1917bab6",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "ID склада",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Фильтр масляный"
+                                    },
+                                    "article": {
+                                        "type": "string",
+                                        "example": "MF1234"
+                                    },
+                                    "quantity": {
+                                        "type": "number",
+                                        "example": 15
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-06-02"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Поступление добавлено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "example": "in"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/warehouses/{warehouse}/spare-parts/usages": {
+            "post": {
+                "tags": [
+                    "SpareParts"
+                ],
+                "summary": "Списание запчастей",
+                "operationId": "6d5e5c72f50f082ed12f0da6f5ba42ad",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "ID склада",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Фильтр масляный"
+                                    },
+                                    "article": {
+                                        "type": "string",
+                                        "example": "MF1234"
+                                    },
+                                    "quantity": {
+                                        "type": "number",
+                                        "example": 3
+                                    },
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2025-06-02"
+                                    },
+                                    "reason": {
+                                        "type": "string",
+                                        "example": "Замена на тракторе Т-150"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Списание выполнено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "type": {
+                                            "type": "string",
+                                            "example": "out"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -1531,6 +1761,10 @@
         {
             "name": "GrainLogs",
             "description": "GrainLogs"
+        },
+        {
+            "name": "SpareParts",
+            "description": "SpareParts"
         }
     ]
 }

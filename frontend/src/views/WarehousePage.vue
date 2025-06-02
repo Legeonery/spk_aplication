@@ -7,6 +7,7 @@ import CreateGrainDelivery from '@/components/CreateGrainDelivery.vue'
 import GrainDeliveryHistory from '@/components/GrainDeliveryHistory.vue'
 import CreateGrainShipment from '@/components/CreateGrainShipment.vue'
 import GrainShipmentHistory from '@/components/GrainShipmentHistory.vue'
+import EditGrainWarehouseModal from '@/components/EditGrainWarehouseModal.vue'
 
 const showShipmentModal = ref(false)
 const showDeliveryModal = ref(false)
@@ -144,16 +145,26 @@ const deliveryChartData = computed(() => {
   deliveries.value.forEach(d => {
     const date = d.delivery_date
     dateSet.add(date)
-    if (!dataMap[d.grain_type_id].delivery[date]) dataMap[d.grain_type_id].delivery[date] = 0
-    dataMap[d.grain_type_id].delivery[date] += d.volume
+
+    if (dataMap[d.grain_type_id]) {
+      if (!dataMap[d.grain_type_id].delivery[date]) {
+        dataMap[d.grain_type_id].delivery[date] = 0
+      }
+      dataMap[d.grain_type_id].delivery[date] += d.volume
+    }
   })
 
   // Заполняем отгрузки
   shipments.value.forEach(s => {
     const date = s.shipment_date
     dateSet.add(date)
-    if (!dataMap[s.grain_type_id].shipment[date]) dataMap[s.grain_type_id].shipment[date] = 0
-    dataMap[s.grain_type_id].shipment[date] += s.volume
+
+    if (dataMap[s.grain_type_id]) {
+      if (!dataMap[s.grain_type_id].shipment[date]) {
+        dataMap[s.grain_type_id].shipment[date] = 0
+      }
+      dataMap[s.grain_type_id].shipment[date] += s.volume
+    }
   })
 
   const allDates = Array.from(dateSet).sort()
@@ -308,37 +319,8 @@ const tabs = [
         fetchShipments()
         fetchGrains()
       }" />
-    <!-- TOAST -->
-    <transition name="fade">
-      <div v-if="showEditModal"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md relative animate-fade-in">
-          <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700" @click="closeEditModal">✖</button>
-          <h2 class="text-xl font-bold mb-4">Редактирование склада</h2>
-
-          <div class="space-y-4">
-            <input v-model="form.name" type="text" placeholder="Наименование склада"
-              class="w-full border rounded px-4 py-2" />
-            <select v-model="form.type" class="w-full border rounded px-4 py-2">
-              <option disabled value="">Выберите тип склада</option>
-              <option value="зерновой">Зерновой</option>
-              <option value="склад запчастей">Склад запчастей</option>
-              <option value="другое">Другое</option>
-            </select>
-            <input v-model="form.area" type="number" placeholder="Площадь (м²)"
-              class="w-full border rounded px-4 py-2" />
-            <input v-if="form.type === 'зерновой'" v-model="form.max_historical_load" type="number"
-              placeholder="Макс. загрузка (тонн)" class="w-full border rounded px-4 py-2" />
-            <p class="text-red-500 text-sm" v-if="error">{{ error }}</p>
-            <div class="flex justify-end gap-2">
-              <button @click="updateWarehouse" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">💾
-                Сохранить</button>
-              <button @click="closeEditModal" class="text-gray-600 underline">Отмена</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition>
+    <EditGrainWarehouseModal v-if="showEditModal" :model-value="showEditModal" :warehouse="warehouse"
+      @close="showEditModal = false" @updated="fetchWarehouse" />
   </div>
 </template>
 

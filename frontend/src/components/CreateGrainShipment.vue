@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import api from '@/services/api'
 
 const props = defineProps({
@@ -82,6 +82,9 @@ const submit = async () => {
         error.value = err.response?.data?.message || 'Ошибка при сохранении'
     }
 }
+onMounted(() => {
+    loadOptions()
+})
 </script>
 
 <template>

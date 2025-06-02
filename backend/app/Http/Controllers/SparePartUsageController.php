@@ -17,9 +17,19 @@ class SparePartUsageController extends Controller
     {
         $usages = SparePartMovement::with('sparePart')
             ->where('warehouse_id', $warehouseId)
-            ->where('type', 'out') // Списание
+            ->where('type', 'out')
             ->orderByDesc('date')
-            ->get();
+            ->get()
+            ->map(function ($usage) {
+                return [
+                    'id' => $usage->id,
+                    'date' => $usage->date,
+                    'quantity' => $usage->quantity,
+                    'reason' => $usage->reason,
+                    'name' => $usage->sparePart->name ?? null,
+                    'article' => $usage->sparePart->article ?? null,
+                ];
+            });
 
         return response()->json($usages);
     }
