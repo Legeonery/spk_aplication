@@ -70,4 +70,5 @@ Route::middleware('jwt.auth')->group(function () {
     Route::post('/tare-measurements/check', [TareMeasurementController::class, 'needsMeasurement']);
     Route::post('/tare-measurements', [TareMeasurementController::class, 'store']);
     Route::get('/tare-measurements/check', [TareMeasurementController::class, 'check']);
+    Route::patch('/vehicles/{vehicle}/toggle-availability', [VehicleController::class, 'toggleAvailability']);
 });

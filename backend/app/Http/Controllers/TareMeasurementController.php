@@ -59,24 +59,31 @@ class TareMeasurementController extends Controller
             // новый замер (либо каждые 10)
             $count = $existing ? $existing->delivery_count + 1 : 0;
 
-            $existing?->delete(); // удаляем предыдущую запись
+            $existing?->delete();
             $tare = TareMeasurement::create([
                 'vehicle_id' => $vehicle->id,
                 'tare_weight' => $request->tare_weight,
                 'delivery_count' => $count,
             ]);
         } else {
-            // отгрузка — всегда новый замер
-            $existing?->delete();
+            // отгрузка — если уже есть запись, не создавать новую
+            if ($existing) {
+                return response()->json([
+                    'message' => 'Замер уже существует для отгрузки.',
+                    'data' => $existing
+                ], 200);
+            }
+
             $tare = TareMeasurement::create([
                 'vehicle_id' => $vehicle->id,
                 'tare_weight' => $request->tare_weight,
-                'delivery_count' => 0,
+                'delivery_count' => 0, // фиксированно, если нужно ограничение
             ]);
         }
 
         return response()->json($tare, 201);
     }
+
     public function check(Request $request)
     {
         $request->validate([

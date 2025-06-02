@@ -6,6 +6,26 @@ import api from '@/services/api'
 
 const vehicles = ref([])
 const showModal = ref(false)
+const confirmModal = ref(false)
+const selectedVehicle = ref(null)
+
+const confirmToggle = (vehicle) => {
+  selectedVehicle.value = vehicle
+  confirmModal.value = true
+}
+
+const toggleStatus = async () => {
+  if (!selectedVehicle.value) return
+
+  try {
+    await api.patch(`/vehicles/${selectedVehicle.value.id}/toggle-availability`)
+    confirmModal.value = false
+    selectedVehicle.value = null
+    await fetchVehicles()
+  } catch (e) {
+    console.error('Ошибка при смене статуса:', e)
+  }
+}
 
 const imageByKind = {
   трактор: '/tractor.png',
@@ -49,8 +69,10 @@ const handleFormSuccess = () => {
       </button>
 
       <!-- Карточки ТС -->
-      <router-link v-for="vehicle in vehicles" :key="vehicle.id" :to="`/transport/${vehicle.id}`"
-        class="p-4 flex flex-col items-center justify-center border-2 rounded-md hover:bg-blue-50 transition">
+      <!-- Карточки ТС -->
+      <div v-for="vehicle in vehicles" :key="vehicle.id"
+        class="p-4 flex flex-col items-center justify-center border-2 rounded-md hover:bg-blue-50 transition cursor-pointer"
+        @click="confirmToggle(vehicle)">
         <img :src="imageByKind[vehicle.vehicle_kind?.name] || '/default.png'" width="140" />
         <pre class="text-xs text-gray-400">{{ vehicle.vehicle_kind?.name }}</pre>
         <span class="mt-2 font-medium text-gray-700">{{ vehicle.name || 'Без названия' }}</span>
@@ -58,7 +80,24 @@ const handleFormSuccess = () => {
         <span class="mt-1 text-sm font-semibold" :class="vehicle.is_available ? 'text-green-600' : 'text-red-500'">
           ● {{ vehicle.is_available ? 'Свободно' : 'Занято' }}
         </span>
-      </router-link>
+      </div>
+
+      <!-- Модальное подтверждение -->
+      <div v-if="confirmModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+        <div class="bg-white rounded-xl p-6 shadow-xl max-w-sm w-full">
+          <h2 class="text-lg font-bold mb-4">Подтверждение</h2>
+          <p class="mb-4">Вы уверены, что хотите {{ selectedVehicle?.is_available ? 'занять' : 'освободить' }} ТС
+            <strong>{{ selectedVehicle?.number }}</strong>?
+          </p>
+          <div class="flex justify-end gap-2">
+            <button @click="confirmModal = false"
+              class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Отмена</button>
+            <button @click="toggleStatus"
+              class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Подтвердить</button>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- Модальное окно -->

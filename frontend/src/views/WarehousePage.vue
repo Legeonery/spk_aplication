@@ -36,7 +36,7 @@ const form = ref({
 
 const showToast = (message, type = 'success') => {
   toast.value = { message, type, show: true }
-  setTimeout(() => toast.value.show = false, 3000)
+  setTimeout(() => toast.value.show = false, 5000)
 }
 
 const fetchWarehouse = async () => {
@@ -237,16 +237,14 @@ const checkBeforeDelivery = () => {
   }
 
   // Если хотя бы у одного транспорта `delivery_count` был равен 9, то после приёмки он удалён
-  const needsTare = vehicles.value.some(v =>
-    ['привоз', 'универсальный'].includes(v.type) &&
-    (!v.latest_tare_measurement || v.latest_tare_measurement.delivery_count >= 10)
-  )
+  const needsTare = vehicles.value
+    .filter(v => ['привоз', 'универсальный'].includes(v.type))
+    .every(v => !v.latest_tare_measurement || v.latest_tare_measurement.delivery_count >= 10)
 
   if (needsTare) {
-    showToast('⚠️ Замер тары устарел. Сначала выполните повторный замер.', 'error')
+    showToast('⚠️ У всех подходящих ТС замер тары устарел. Сначала выполните повторный замер.', 'error')
     return
   }
-
   showDeliveryModal.value = true
 }
 const vehicles = ref([])
@@ -262,7 +260,8 @@ const fetchVehicles = async () => {
 
 const vehiclesWithTare = computed(() =>
   vehicles.value.filter(v =>
-    ['привоз', 'универсальный'].includes(v.type) && v.latest_tare_measurement
+    ['привоз', 'отгрузка', 'универсальный'].includes(v.type) &&
+    v.latest_tare_measurement
   )
 )
 const handleDeliverySuccess = (res) => {
@@ -277,6 +276,22 @@ const handleDeliverySuccess = (res) => {
       show: true
     }
   }
+}
+const checkBeforeShipment = () => {
+  const shipmentVehicles = vehicles.value.filter(v =>
+    ['отгрузка', 'универсальный'].includes(v.type)
+  )
+
+  const allInvalid = shipmentVehicles.every(v =>
+    !v.latest_tare_measurement || v.latest_tare_measurement.delivery_count >= 1
+  )
+
+  if (shipmentVehicles.length === 0 || allInvalid) {
+    showToast('❗ Все ТС для отгрузки требуют повторного замера тары.', 'error')
+    return
+  }
+
+  showShipmentModal.value = true
 }
 onMounted(() => {
   fetchWarehouse()
@@ -307,7 +322,7 @@ onMounted(() => {
           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium shadow">
           ➕ Добавить поставку
         </button>
-        <button @click="showShipmentModal = true"
+        <button @click="checkBeforeShipment"
           class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded font-medium shadow">➕ Добавить
           отгрузку</button>
         <button @click="downloadReport"
