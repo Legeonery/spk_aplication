@@ -18,21 +18,23 @@ class GrainDeliveryController extends Controller
         $validated = $request->validate([
             'warehouse_id' => 'required|exists:warehouses,id',
             'grain_type_id' => 'required|exists:grain_types,id',
-            'volume' => 'required|numeric|min:0.1',
+            'volume' => 'required|numeric|min:0.1', // Брутто
             'delivery_date' => 'required|date',
             'vehicle_id' => 'nullable|exists:vehicles,id',
             'driver_id' => 'nullable|exists:drivers,id',
         ]);
 
-        $delivery = GrainDelivery::create($validated);
-
-        $vehicle = Vehicle::with('latestTareMeasurement')->find($delivery->vehicle_id);
+        $nettoVolume = $validated['volume'];
+        $tareWeight = null;
+        $vehicle = Vehicle::with('latestTareMeasurement')->find($validated['vehicle_id']);
         $showTareReminder = false;
 
         if ($vehicle && in_array($vehicle->type, ['привоз', 'универсальный'])) {
             $tare = $vehicle->latestTareMeasurement;
 
             if ($tare) {
+                $tareWeight = $tare->tare_weight;
+                $nettoVolume = max($validated['volume'] - $tareWeight, 0);
                 $tare->increment('delivery_count');
 
                 if ($tare->delivery_count >= 10) {
@@ -41,6 +43,11 @@ class GrainDeliveryController extends Controller
                 }
             }
         }
+
+        $delivery = GrainDelivery::create(array_merge(
+            $validated,
+            ['volume' => $nettoVolume, 'tare_weight' => $tareWeight]
+        ));
 
         WarehouseGrain::updateOrCreate(
             [
@@ -56,6 +63,8 @@ class GrainDeliveryController extends Controller
             'showTareReminder' => $showTareReminder
         ]);
     }
+
+
 
     // Получение поставок по складу
     public function byWarehouse($warehouseId)
@@ -78,6 +87,7 @@ class GrainDeliveryController extends Controller
         $old = $record->only([
             'grain_type_id',
             'volume',
+            'tare_weight',
             'delivery_date',
             'vehicle_id',
             'driver_id'
@@ -86,16 +96,39 @@ class GrainDeliveryController extends Controller
 
         $validated = $request->validate([
             'grain_type_id' => 'required|exists:grain_types,id',
-            'volume' => 'required|numeric|min:0.1',
+            'volume' => 'required|numeric|min:0.1', // NETTO или БРУТТО — зависит от tare_weight
             'delivery_date' => 'required|date',
             'vehicle_id' => 'nullable|exists:vehicles,id',
             'driver_id' => 'nullable|exists:drivers,id',
+            'tare_weight' => 'nullable|numeric|min:0'
         ]);
 
-        $record->update($validated);
+        // Если tare_weight передан — считаем, что volume уже NETTO
+        $tareWeight = $validated['tare_weight'] ?? null;
+        $nettoVolume = $validated['volume'];
+
+        // Если нет тары — вычисляем сами
+        if ($tareWeight === null) {
+            $vehicle = Vehicle::with('latestTareMeasurement')->find($validated['vehicle_id']);
+
+            if ($vehicle && in_array($vehicle->type, ['привоз', 'универсальный'])) {
+                $tare = $vehicle->latestTareMeasurement;
+                if ($tare) {
+                    $tareWeight = $tare->tare_weight;
+                    $nettoVolume = max($validated['volume'] - $tareWeight, 0);
+                }
+            }
+        }
+
+        $record->update(array_merge($validated, [
+            'volume' => $nettoVolume,
+            'tare_weight' => $tareWeight,
+        ]));
+
         $new = $record->only([
             'grain_type_id',
             'volume',
+            'tare_weight',
             'delivery_date',
             'vehicle_id',
             'driver_id'
@@ -112,7 +145,6 @@ class GrainDeliveryController extends Controller
             $grain->amount = max($grain->amount, 0);
             $grain->save();
         } else {
-            // Старая культура — вычитаем
             $oldGrain = WarehouseGrain::firstOrCreate(
                 ['warehouse_id' => $oldWarehouseId, 'grain_type_id' => $old['grain_type_id']],
                 ['amount' => 0]
@@ -121,7 +153,6 @@ class GrainDeliveryController extends Controller
             $oldGrain->amount = max($oldGrain->amount, 0);
             $oldGrain->save();
 
-            // Новая культура — прибавляем
             $newGrain = WarehouseGrain::firstOrCreate(
                 ['warehouse_id' => $oldWarehouseId, 'grain_type_id' => $new['grain_type_id']],
                 ['amount' => 0]
@@ -130,7 +161,6 @@ class GrainDeliveryController extends Controller
             $newGrain->save();
         }
 
-        // === Логирование ===
         $changes = [];
         foreach (array_keys($old) as $key) {
             if ($old[$key] != $new[$key]) {

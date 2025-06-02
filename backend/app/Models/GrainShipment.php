@@ -16,6 +16,7 @@ class GrainShipment extends Model
         'shipment_date',
         'vehicle_id',
         'driver_id',
+        'tare_weight',
     ];
 
     public function warehouse()

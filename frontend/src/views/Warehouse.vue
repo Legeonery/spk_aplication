@@ -105,7 +105,7 @@ onMounted(fetchWarehouses)
           v-if="warehouse.type === 'зерновой' && warehouse.max_historical_load > 0"
           class="text-gray-500 text-sm"
         >
-          Макс. загрузка: {{ warehouse.max_historical_load }} т
+          Макс. загрузка: {{ warehouse.max_historical_load }} кг.
         </span>
       </router-link>
     </div>
@@ -152,7 +152,7 @@ onMounted(fetchWarehouses)
               v-if="form.type === 'Зерновой'"
               v-model="form.max_historical_load"
               type="number"
-              placeholder="Макс. загрузка (тонн)"
+              placeholder="Макс. загрузка (килограмм)"
               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring focus:border-blue-400"
             />
 

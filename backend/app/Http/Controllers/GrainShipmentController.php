@@ -14,12 +14,12 @@ class GrainShipmentController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'warehouse_id'   => 'required|exists:warehouses,id',
-            'grain_type_id'  => 'required|exists:grain_types,id',
-            'volume'         => 'required|numeric|min:0.1',
-            'shipment_date'  => 'required|date',
-            'vehicle_id'     => 'required|exists:vehicles,id',
-            'driver_id'      => 'required|exists:drivers,id',
+            'warehouse_id' => 'required|exists:warehouses,id',
+            'grain_type_id' => 'required|exists:grain_types,id',
+            'volume' => 'required|numeric|min:0.1', // Брутто
+            'shipment_date' => 'required|date',
+            'vehicle_id' => 'required|exists:vehicles,id',
+            'driver_id' => 'required|exists:drivers,id',
         ]);
 
         $vehicle = Vehicle::with('latestTareMeasurement')->findOrFail($validated['vehicle_id']);
@@ -29,15 +29,19 @@ class GrainShipmentController extends Controller
             return response()->json(['message' => 'Необходимо выполнить замер тары перед отгрузкой.'], 409);
         }
 
-        // Ограничение: 1 замер на 1 отгрузку
         if ($tare->delivery_count >= 1) {
             $tare->delete();
             return response()->json(['message' => 'Замер тары устарел. Выполните повторный замер.'], 409);
         }
 
-        $shipment = GrainShipment::create($validated);
+        $tareWeight = $tare->tare_weight;
+        $nettoVolume = max($validated['volume'] - $tareWeight, 0);
 
-        // Удаляем замер тары после использования
+        $shipment = GrainShipment::create(array_merge(
+            $validated,
+            ['volume' => $nettoVolume, 'tare_weight' => $tareWeight]
+        ));
+
         $tare->delete();
 
         $grain = WarehouseGrain::firstOrCreate(
@@ -58,7 +62,16 @@ class GrainShipmentController extends Controller
     public function update(Request $request, $id)
     {
         $record = GrainShipment::findOrFail($id);
-        $old = $record->only(['grain_type_id', 'volume', 'shipment_date', 'vehicle_id', 'driver_id', 'warehouse_id']);
+
+        $old = $record->only([
+            'grain_type_id',
+            'volume',
+            'tare_weight',
+            'shipment_date',
+            'vehicle_id',
+            'driver_id',
+            'warehouse_id'
+        ]);
 
         $validated = $request->validate([
             'grain_type_id' => 'required|exists:grain_types,id',
@@ -66,19 +79,38 @@ class GrainShipmentController extends Controller
             'shipment_date' => 'required|date',
             'vehicle_id' => 'required|exists:vehicles,id',
             'driver_id' => 'required|exists:drivers,id',
+            'tare_weight' => 'nullable|numeric|min:0'
         ]);
 
-        $record->update($validated);
+        // Если tare_weight пришёл явно — volume считается уже нетто
+        $tareWeight = $validated['tare_weight'] ?? null;
+        $nettoVolume = $validated['volume'];
+
+        if ($tareWeight === null) {
+            $vehicle = Vehicle::with('latestTareMeasurement')->find($validated['vehicle_id']);
+
+            if ($vehicle && in_array($vehicle->type, ['отгрузка', 'универсальный'])) {
+                $tare = $vehicle->latestTareMeasurement;
+                if ($tare) {
+                    $tareWeight = $tare->tare_weight;
+                    $nettoVolume = max($validated['volume'] - $tareWeight, 0);
+                }
+            }
+        }
+
+        $record->update(array_merge($validated, [
+            'volume' => $nettoVolume,
+            'tare_weight' => $tareWeight,
+        ]));
+
         $new = $record->only(array_keys($old));
 
         if ($old['grain_type_id'] == $new['grain_type_id']) {
             $diff = $old['volume'] - $new['volume'];
-
             $grain = WarehouseGrain::firstOrCreate(
                 ['warehouse_id' => $old['warehouse_id'], 'grain_type_id' => $old['grain_type_id']],
                 ['amount' => 0]
             );
-
             $grain->amount += $diff;
             $grain->amount = max(0, $grain->amount);
             $grain->save();

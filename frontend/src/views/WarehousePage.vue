@@ -36,7 +36,7 @@ const form = ref({
 
 const showToast = (message, type = 'success') => {
   toast.value = { message, type, show: true }
-  setTimeout(() => toast.value.show = false, 5000)
+  setTimeout(() => (toast.value.show = false), 5000)
 }
 
 const fetchWarehouse = async () => {
@@ -129,7 +129,7 @@ const deliveryChartData = computed(() => {
   const cultureMap = new Map()
 
   // Собираем все культуры
-  grains.value.forEach(g => {
+  grains.value.forEach((g) => {
     cultureMap.set(g.grain_type.id, g.grain_type.name)
   })
 
@@ -139,12 +139,12 @@ const deliveryChartData = computed(() => {
   const dataMap = {}
 
   // Инициализируем структуру
-  cultureIds.forEach(id => {
+  cultureIds.forEach((id) => {
     dataMap[id] = { delivery: {}, shipment: {} }
   })
 
   // Заполняем поставки
-  deliveries.value.forEach(d => {
+  deliveries.value.forEach((d) => {
     const date = d.delivery_date
     dateSet.add(date)
 
@@ -157,7 +157,7 @@ const deliveryChartData = computed(() => {
   })
 
   // Заполняем отгрузки
-  shipments.value.forEach(s => {
+  shipments.value.forEach((s) => {
     const date = s.shipment_date
     dateSet.add(date)
 
@@ -178,20 +178,20 @@ const deliveryChartData = computed(() => {
     datasets.push({
       label: `${name} — Поставка`,
       backgroundColor: getColor(name, 'delivery'),
-      data: allDates.map(d => dataMap[id].delivery[d] || 0)
+      data: allDates.map((d) => dataMap[id].delivery[d] || 0),
     })
 
     // Отгрузка
     datasets.push({
       label: `${name} — Отгрузка`,
       backgroundColor: getColor(name, 'shipment'),
-      data: allDates.map(d => dataMap[id].shipment[d] || 0)
+      data: allDates.map((d) => dataMap[id].shipment[d] || 0),
     })
   }
 
   return {
     labels: allDates,
-    datasets
+    datasets,
   }
 })
 
@@ -200,7 +200,7 @@ function getColor(name, type) {
     Пшеница: '#36A2EB',
     Кукуруза: '#F87171',
     Ячмень: '#10B981',
-    Овёс: '#F59E0B'
+    Овёс: '#F59E0B',
   }
 
   const shade = type === 'shipment' ? '80' : 'CC' // Более прозрачный цвет для отгрузки
@@ -213,12 +213,12 @@ const chartOptions = {
   interaction: { mode: 'index', intersect: false },
   plugins: {
     legend: { position: 'bottom' },
-    title: { display: true, text: 'Поставки и отгрузки по культурам и датам' }
+    title: { display: true, text: 'Поставки и отгрузки по культурам и датам' },
   },
   scales: {
     x: { stacked: false, title: { display: true, text: 'Дата' } },
-    y: { stacked: false, beginAtZero: true, title: { display: true, text: 'Объём (т)' } }
-  }
+    y: { stacked: false, beginAtZero: true, title: { display: true, text: 'Объём (кг)' } },
+  },
 }
 
 const activeTab = ref('grains')
@@ -238,11 +238,14 @@ const checkBeforeDelivery = () => {
 
   // Если хотя бы у одного транспорта `delivery_count` был равен 9, то после приёмки он удалён
   const needsTare = vehicles.value
-    .filter(v => ['привоз', 'универсальный'].includes(v.type))
-    .every(v => !v.latest_tare_measurement || v.latest_tare_measurement.delivery_count >= 10)
+    .filter((v) => ['привоз', 'универсальный'].includes(v.type))
+    .every((v) => !v.latest_tare_measurement || v.latest_tare_measurement.delivery_count >= 10)
 
   if (needsTare) {
-    showToast('⚠️ У всех подходящих ТС замер тары устарел. Сначала выполните повторный замер.', 'error')
+    showToast(
+      '⚠️ У всех подходящих ТС замер тары устарел. Сначала выполните повторный замер.',
+      'error',
+    )
     return
   }
   showDeliveryModal.value = true
@@ -259,10 +262,9 @@ const fetchVehicles = async () => {
 }
 
 const vehiclesWithTare = computed(() =>
-  vehicles.value.filter(v =>
-    ['привоз', 'отгрузка', 'универсальный'].includes(v.type) &&
-    v.latest_tare_measurement
-  )
+  vehicles.value.filter(
+    (v) => ['привоз', 'отгрузка', 'универсальный'].includes(v.type) && v.latest_tare_measurement,
+  ),
 )
 const handleDeliverySuccess = (res) => {
   showDeliveryModal.value = false
@@ -273,17 +275,17 @@ const handleDeliverySuccess = (res) => {
     toast.value = {
       message: '⚠️ Замер тары устарел. Необходимо выполнить повторный замер.',
       type: 'error',
-      show: true
+      show: true,
     }
   }
 }
 const checkBeforeShipment = () => {
-  const shipmentVehicles = vehicles.value.filter(v =>
-    ['отгрузка', 'универсальный'].includes(v.type)
+  const shipmentVehicles = vehicles.value.filter((v) =>
+    ['отгрузка', 'универсальный'].includes(v.type),
   )
 
-  const allInvalid = shipmentVehicles.every(v =>
-    !v.latest_tare_measurement || v.latest_tare_measurement.delivery_count >= 1
+  const allInvalid = shipmentVehicles.every(
+    (v) => !v.latest_tare_measurement || v.latest_tare_measurement.delivery_count >= 1,
   )
 
   if (shipmentVehicles.length === 0 || allInvalid) {
@@ -297,7 +299,6 @@ onMounted(() => {
   fetchWarehouse()
   fetchVehicles()
 })
-
 </script>
 
 <template>
@@ -310,35 +311,63 @@ onMounted(() => {
         <p><strong>Наименование:</strong> {{ warehouse.name }}</p>
         <p><strong>Тип:</strong> {{ warehouse.type }}</p>
         <p><strong>Площадь:</strong> {{ warehouse.area }} м²</p>
-        <p><strong>Макс. загрузка:</strong> {{ warehouse.max_historical_load ?? '—' }} тонн</p>
+        <p><strong>Макс. загрузка:</strong> {{ warehouse.max_historical_load ?? '—' }} килограмм</p>
       </div>
 
       <div class="flex flex-wrap gap-3 mt-2">
-        <button @click="openEditModal"
-          class="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded text-white font-medium">✏️ Редактировать</button>
-        <button @click="deleteWarehouse"
-          class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white font-medium">🗑️ Удалить</button>
-        <button @click="checkBeforeDelivery"
-          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium shadow">
+        <button
+          @click="openEditModal"
+          class="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded text-white font-medium"
+        >
+          ✏️ Редактировать
+        </button>
+        <button
+          @click="deleteWarehouse"
+          class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white font-medium"
+        >
+          🗑️ Удалить
+        </button>
+        <button
+          @click="checkBeforeDelivery"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium shadow"
+        >
           ➕ Добавить поставку
         </button>
-        <button @click="checkBeforeShipment"
-          class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded font-medium shadow">➕ Добавить
-          отгрузку</button>
-        <button @click="downloadReport"
-          class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-medium">📄 Выгрузить отчёт</button>
-        <button @click="showTareModal = true"
-          class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded font-medium shadow">
+        <button
+          @click="checkBeforeShipment"
+          class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded font-medium shadow"
+        >
+          ➕ Добавить отгрузку
+        </button>
+        <button
+          @click="downloadReport"
+          class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-medium"
+        >
+          📄 Выгрузить отчёт
+        </button>
+        <button
+          @click="showTareModal = true"
+          class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded font-medium shadow"
+        >
           ⚖️ Замер тары
         </button>
       </div>
 
       <!-- Вкладки -->
       <div class="flex flex-wrap gap-2 border-b mt-6">
-        <button v-for="tab in tabs" :key="tab.key" @click="activeTab = tab.key" :class="[
-          'px-4 py-2 text-sm font-medium rounded-t-md transition',
-          activeTab === tab.key ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
-        ]">{{ tab.label }}</button>
+        <button
+          v-for="tab in tabs"
+          :key="tab.key"
+          @click="activeTab = tab.key"
+          :class="[
+            'px-4 py-2 text-sm font-medium rounded-t-md transition',
+            activeTab === tab.key
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 hover:bg-gray-200 text-gray-600',
+          ]"
+        >
+          {{ tab.label }}
+        </button>
       </div>
 
       <div class="pt-4 space-y-6">
@@ -348,12 +377,17 @@ onMounted(() => {
               <thead class="bg-gray-50 text-gray-700 text-sm uppercase tracking-wider">
                 <tr>
                   <th class="px-4 py-3">Культура</th>
-                  <th class="px-4 py-3 text-right">Остаток (т)</th>
+                  <th class="px-4 py-3 text-right">Остаток (кг)</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="grain in [...grains].sort((a, b) => a.grain_type.name.localeCompare(b.grain_type.name))"
-                  :key="grain.id" class="bg-white hover:bg-blue-50 transition-all">
+                <tr
+                  v-for="grain in [...grains].sort((a, b) =>
+                    a.grain_type.name.localeCompare(b.grain_type.name),
+                  )"
+                  :key="grain.id"
+                  class="bg-white hover:bg-blue-50 transition-all"
+                >
                   <td class="px-4 py-2 font-medium text-gray-900">{{ grain.grain_type.name }}</td>
                   <td class="px-4 py-2 text-right text-gray-700">{{ grain.amount }}</td>
                 </tr>
@@ -362,46 +396,88 @@ onMounted(() => {
                 <tr class="bg-gray-100 border-t">
                   <td class="px-4 py-2 font-semibold text-right">Общий объём:</td>
                   <td class="px-4 py-2 text-right font-bold text-blue-600">
-                    {{grains.reduce((sum, g) => sum + (parseFloat(g.amount) || 0), 0).toFixed(2)}} т
+                    {{ grains.reduce((sum, g) => sum + (parseFloat(g.amount) || 0), 0).toFixed(2) }}
+                    кг
                   </td>
                 </tr>
               </tfoot>
             </table>
           </div>
-          <p v-if="!grains.length" class="text-gray-500 mt-4 text-center">Нет данных по остаткам.</p>
+          <p v-if="!grains.length" class="text-gray-500 mt-4 text-center">
+            Нет данных по остаткам.
+          </p>
         </div>
         <div v-if="activeTab === 'deliveries'">
-          <GrainDeliveryHistory :deliveries="deliveries" :grains="grains" :highlight-id="lastEditedDeliveryId"
-            @refresh="fetchDeliveries" />
+          <GrainDeliveryHistory
+            :deliveries="deliveries"
+            :grains="grains"
+            :highlight-id="lastEditedDeliveryId"
+            @refresh="fetchDeliveries"
+          />
         </div>
         <div v-if="activeTab === 'shipments'">
-          <GrainShipmentHistory :shipments="shipments" :grains="grains" :highlight-id="lastEditedShipmentId"
-            @refresh="fetchShipments" />
+          <GrainShipmentHistory
+            :shipments="shipments"
+            :grains="grains"
+            :highlight-id="lastEditedShipmentId"
+            @refresh="fetchShipments"
+          />
         </div>
         <div v-if="activeTab === 'chart'">
-          <BarChart :chart-data="deliveryChartData" :chart-options="chartOptions" class="h-[300px] w-full" />
+          <BarChart
+            :chart-data="deliveryChartData"
+            :chart-options="chartOptions"
+            class="h-[300px] w-full"
+          />
         </div>
       </div>
     </div>
-    <CreateGrainDelivery :warehouse-id="warehouse?.id" :show="showDeliveryModal" @close="showDeliveryModal = false"
-      @success="handleDeliverySuccess" />
+    <CreateGrainDelivery
+      :warehouse-id="warehouse?.id"
+      :show="showDeliveryModal"
+      @close="showDeliveryModal = false"
+      @success="handleDeliverySuccess"
+    />
 
-    <CreateGrainShipment :warehouse-id="warehouse?.id" :show="showShipmentModal" @close="showShipmentModal = false"
-      @success="() => {
-        showShipmentModal = false
-        fetchShipments()
-        fetchGrains()
-      }" />
-    <EditGrainWarehouseModal v-if="showEditModal" :model-value="showEditModal" :warehouse="warehouse"
-      @close="showEditModal = false" @updated="fetchWarehouse" />
-    <TareInputModal :show="showTareModal" @close="showTareModal = false" @saved="() => {
-      showTareModal = false
-      fetchVehicles()
-    }" />
-    <div v-if="toast.show" :class="['fixed bottom-5 right-5 px-4 py-2 rounded shadow text-white', {
-      'bg-green-600': toast.type === 'success',
-      'bg-red-500': toast.type === 'error'
-    }]">
+    <CreateGrainShipment
+      :warehouse-id="warehouse?.id"
+      :show="showShipmentModal"
+      @close="showShipmentModal = false"
+      @success="
+        () => {
+          showShipmentModal = false
+          fetchShipments()
+          fetchGrains()
+        }
+      "
+    />
+    <EditGrainWarehouseModal
+      v-if="showEditModal"
+      :model-value="showEditModal"
+      :warehouse="warehouse"
+      @close="showEditModal = false"
+      @updated="fetchWarehouse"
+    />
+    <TareInputModal
+      :show="showTareModal"
+      @close="showTareModal = false"
+      @saved="
+        () => {
+          showTareModal = false
+          fetchVehicles()
+        }
+      "
+    />
+    <div
+      v-if="toast.show"
+      :class="[
+        'fixed bottom-5 right-5 px-4 py-2 rounded shadow text-white',
+        {
+          'bg-green-600': toast.type === 'success',
+          'bg-red-500': toast.type === 'error',
+        },
+      ]"
+    >
       {{ toast.message }}
     </div>
   </div>
