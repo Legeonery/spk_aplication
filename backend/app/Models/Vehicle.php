@@ -10,6 +10,7 @@ class Vehicle extends Model
     use HasFactory;
 
     protected $fillable = [
+        'name',
         'number',
         'type',
         'max_weight',
@@ -17,6 +18,7 @@ class Vehicle extends Model
         'driver_id',
         'is_available',
         'notes',
+        'vehicle_kind_id',
     ];
 
     public function driver()
@@ -35,5 +37,22 @@ class Vehicle extends Model
         return $this->belongsToMany(SparePart::class, 'spare_part_vehicle_links')
             ->withPivot(['used_at', 'note'])
             ->withTimestamps();
+    }
+    public function vehicleKind()
+    {
+        return $this->belongsTo(VehicleKind::class);
+    }
+    public function tareMeasurement()
+    {
+        return $this->hasOne(TareMeasurement::class)->latestOfMany();
+    }
+    public function tareMeasurements()
+    {
+        return $this->hasMany(TareMeasurement::class);
+    }
+
+    public function latestTareMeasurement()
+    {
+        return $this->hasOne(TareMeasurement::class)->latestOfMany();
     }
 }

@@ -8,7 +8,9 @@ import GrainDeliveryHistory from '@/components/GrainDeliveryHistory.vue'
 import CreateGrainShipment from '@/components/CreateGrainShipment.vue'
 import GrainShipmentHistory from '@/components/GrainShipmentHistory.vue'
 import EditGrainWarehouseModal from '@/components/EditGrainWarehouseModal.vue'
+import TareInputModal from '@/components/TareInputModal.vue'
 
+const showTareModal = ref(false)
 const showShipmentModal = ref(false)
 const showDeliveryModal = ref(false)
 const route = useRoute()
@@ -226,6 +228,61 @@ const tabs = [
   { key: 'shipments', label: '📦 Отгрузки' },
   { key: 'chart', label: '📊 Диаграмма' },
 ]
+const checkBeforeDelivery = () => {
+  const eligible = vehiclesWithTare.value
+
+  if (eligible.length === 0) {
+    showToast('❗ Нет транспорта с актуальным замером тары. Выполните повторный замер.', 'error')
+    return
+  }
+
+  // Если хотя бы у одного транспорта `delivery_count` был равен 9, то после приёмки он удалён
+  const needsTare = vehicles.value.some(v =>
+    ['привоз', 'универсальный'].includes(v.type) &&
+    (!v.latest_tare_measurement || v.latest_tare_measurement.delivery_count >= 10)
+  )
+
+  if (needsTare) {
+    showToast('⚠️ Замер тары устарел. Сначала выполните повторный замер.', 'error')
+    return
+  }
+
+  showDeliveryModal.value = true
+}
+const vehicles = ref([])
+
+const fetchVehicles = async () => {
+  try {
+    const res = await api.get('/vehicles')
+    vehicles.value = res.data
+  } catch (e) {
+    console.error('Ошибка загрузки транспорта', e)
+  }
+}
+
+const vehiclesWithTare = computed(() =>
+  vehicles.value.filter(v =>
+    ['привоз', 'универсальный'].includes(v.type) && v.latest_tare_measurement
+  )
+)
+const handleDeliverySuccess = (res) => {
+  showDeliveryModal.value = false
+  fetchDeliveries()
+  fetchGrains()
+
+  if (res?.showTareReminder) {
+    toast.value = {
+      message: '⚠️ Замер тары устарел. Необходимо выполнить повторный замер.',
+      type: 'error',
+      show: true
+    }
+  }
+}
+onMounted(() => {
+  fetchWarehouse()
+  fetchVehicles()
+})
+
 </script>
 
 <template>
@@ -246,14 +303,19 @@ const tabs = [
           class="bg-yellow-400 hover:bg-yellow-500 px-4 py-2 rounded text-white font-medium">✏️ Редактировать</button>
         <button @click="deleteWarehouse"
           class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white font-medium">🗑️ Удалить</button>
-        <button @click="showDeliveryModal = true"
-          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium shadow">➕ Добавить
-          поставку</button>
+        <button @click="checkBeforeDelivery"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium shadow">
+          ➕ Добавить поставку
+        </button>
         <button @click="showShipmentModal = true"
           class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded font-medium shadow">➕ Добавить
           отгрузку</button>
         <button @click="downloadReport"
           class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white font-medium">📄 Выгрузить отчёт</button>
+        <button @click="showTareModal = true"
+          class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded font-medium shadow">
+          ⚖️ Замер тары
+        </button>
       </div>
 
       <!-- Вкладки -->
@@ -307,11 +369,7 @@ const tabs = [
       </div>
     </div>
     <CreateGrainDelivery :warehouse-id="warehouse?.id" :show="showDeliveryModal" @close="showDeliveryModal = false"
-      @success="() => {
-        showDeliveryModal = false
-        fetchDeliveries()
-        fetchGrains()
-      }" />
+      @success="handleDeliverySuccess" />
 
     <CreateGrainShipment :warehouse-id="warehouse?.id" :show="showShipmentModal" @close="showShipmentModal = false"
       @success="() => {
@@ -321,6 +379,16 @@ const tabs = [
       }" />
     <EditGrainWarehouseModal v-if="showEditModal" :model-value="showEditModal" :warehouse="warehouse"
       @close="showEditModal = false" @updated="fetchWarehouse" />
+    <TareInputModal :show="showTareModal" @close="showTareModal = false" @saved="() => {
+      showTareModal = false
+      fetchVehicles()
+    }" />
+    <div v-if="toast.show" :class="['fixed bottom-5 right-5 px-4 py-2 rounded shadow text-white', {
+      'bg-green-600': toast.type === 'success',
+      'bg-red-500': toast.type === 'error'
+    }]">
+      {{ toast.message }}
+    </div>
   </div>
 </template>
 

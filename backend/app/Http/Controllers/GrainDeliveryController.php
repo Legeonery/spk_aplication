@@ -7,6 +7,8 @@ use App\Models\GrainDelivery;
 use App\Models\WarehouseGrain;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Models\Vehicle;
+use App\Models\TareMeasurement;
 
 class GrainDeliveryController extends Controller
 {
@@ -24,6 +26,22 @@ class GrainDeliveryController extends Controller
 
         $delivery = GrainDelivery::create($validated);
 
+        $vehicle = Vehicle::with('latestTareMeasurement')->find($delivery->vehicle_id);
+        $showTareReminder = false;
+
+        if ($vehicle && in_array($vehicle->type, ['привоз', 'универсальный'])) {
+            $tare = $vehicle->latestTareMeasurement;
+
+            if ($tare) {
+                $tare->increment('delivery_count');
+
+                if ($tare->delivery_count >= 10) {
+                    $tare->delete();
+                    $showTareReminder = true;
+                }
+            }
+        }
+
         WarehouseGrain::updateOrCreate(
             [
                 'warehouse_id' => $delivery->warehouse_id,
@@ -32,7 +50,11 @@ class GrainDeliveryController extends Controller
             []
         )->increment('amount', $delivery->volume);
 
-        return response()->json(['message' => 'Поставка добавлена', 'data' => $delivery]);
+        return response()->json([
+            'message' => 'Поставка добавлена',
+            'data' => $delivery,
+            'showTareReminder' => $showTareReminder
+        ]);
     }
 
     // Получение поставок по складу
@@ -87,7 +109,7 @@ class GrainDeliveryController extends Controller
                 ['amount' => 0]
             );
             $grain->amount += $diff;
-            $grain->amount = max($grain->amount, 0); 
+            $grain->amount = max($grain->amount, 0);
             $grain->save();
         } else {
             // Старая культура — вычитаем
@@ -96,7 +118,7 @@ class GrainDeliveryController extends Controller
                 ['amount' => 0]
             );
             $oldGrain->amount -= $old['volume'];
-            $oldGrain->amount = max($oldGrain->amount, 0); 
+            $oldGrain->amount = max($oldGrain->amount, 0);
             $oldGrain->save();
 
             // Новая культура — прибавляем

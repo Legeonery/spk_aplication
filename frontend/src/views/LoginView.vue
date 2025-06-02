@@ -19,7 +19,7 @@ const login = async () => {
     localStorage.setItem('token', token)
 
     // Перенаправление на главную страницу после успешного логина
-    router.push('/') // Перенаправляем на главную страницу
+    router.push('/warehouse') // Перенаправляем на главную страницу
   } catch (err) {
     error.value = 'Неверный email или пароль'
     console.error(err)

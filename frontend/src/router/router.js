@@ -12,7 +12,7 @@ const routes = [
     component: MainLayout, // 👈 здесь оборачиваем
     meta: { requiresAuth: true },
     children: [
-      { path: '', redirect: '/warehouse' }, // 👈 перенаправление на что-то по умолчанию
+      { path: '', redirect: '/login' }, // 👈 перенаправление на что-то по умолчанию
       { path: 'warehouse', component: Warehouse },
       { path: 'transport', component: Transport },
       { path: 'warehouse/:id', component: WarehousePage },

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +24,13 @@ class DatabaseSeeder extends Seeder
             GrainTypesSeeder::class,
             DriversSeeder::class,
             VehiclesSeeder::class,
+        ]);
+        DB::table('vehicle_kinds')->insert([
+            ['name' => 'трактор'],
+            ['name' => 'камаз'],
+            ['name' => 'комбайн'],
+            ['name' => 'погрузчик'],
+            ['name' => 'гусеничная техника'],
         ]);
     }
 }

@@ -53,11 +53,11 @@ watch(() => props.show, (val) => {
 const submit = async () => {
     error.value = ''
     try {
-        await api.post('/grain-deliveries', {
+        const res = await api.post('/grain-deliveries', {
             ...form.value,
             warehouse_id: props.warehouseId
         })
-        emit('success')
+        emit('success', res.data) // передаём данные в родительский компонент
         emit('close')
     } catch (err) {
         error.value = err.response?.data?.message || 'Ошибка при сохранении'
@@ -88,10 +88,11 @@ onMounted(() => {
 
                     <input v-model="form.delivery_date" type="date" class="w-full border rounded px-4 py-2" />
 
-                    <select v-model="form.vehicle_id" class="w-full border rounded px-4 py-2">
+                    <select v-model="form.vehicle_id" class="w-full border rounded px-4     py-2">
                         <option disabled value="">Выберите транспорт</option>
-                        <option v-for="v in vehicles.filter(v => v.type === 'привоз' || v.type === 'универсальный')"
-                            :key="v.id" :value="v.id">
+                        <option v-for="v in vehicles.filter(v =>
+                            ['привоз', 'универсальный'].includes(v.type) && v.latest_tare_measurement
+                        )" :key="v.id" :value="v.id">
                             {{ v.number }} ({{ v.type }})
                         </option>
                     </select>

@@ -15,6 +15,8 @@ use App\Http\Controllers\SparePartMovementController;
 use App\Http\Controllers\SparePartDeliveryController;
 use App\Http\Controllers\SparePartUsageController;
 use App\Http\Controllers\SparePartReportController;
+use App\Http\Controllers\VehicleKindController;
+use App\Http\Controllers\TareMeasurementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,5 +65,9 @@ Route::middleware('jwt.auth')->group(function () {
     Route::get('/warehouses/{warehouse}/spare-parts/usages', [SparePartUsageController::class, 'index']);
     Route::get('/warehouses/{warehouse}/spare-parts', [SparePartMovementController::class, 'getStock']);
     Route::get('/warehouses/{warehouse}/spare-parts/report', [SparePartReportController::class, 'generate']);
-
+    Route::apiResource('vehicles', VehicleController::class);
+    Route::apiResource('vehicle-kinds', VehicleKindController::class);
+    Route::post('/tare-measurements/check', [TareMeasurementController::class, 'needsMeasurement']);
+    Route::post('/tare-measurements', [TareMeasurementController::class, 'store']);
+    Route::get('/tare-measurements/check', [TareMeasurementController::class, 'check']);
 });
