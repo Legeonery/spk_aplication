@@ -70,7 +70,7 @@
             @endforeach
             <tr class="summary">
                 <td>Общий остаток:</td>
-                <td>{{ number_format($totalStock, 2, ',', ' ') }} т</td>
+                <td>{{ number_format($totalStock, 2, ',', ' ') }} кг</td>
             </tr>
         </tbody>
     </table>

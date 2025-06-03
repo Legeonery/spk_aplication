@@ -21,7 +21,7 @@ class GrainDeliveryController extends Controller
             'volume' => 'required|numeric|min:0.1', // Брутто
             'delivery_date' => 'required|date',
             'vehicle_id' => 'nullable|exists:vehicles,id',
-            'driver_id' => 'nullable|exists:drivers,id',
+            'driver_id' => 'nullable|exists:users,id',
         ]);
 
         $nettoVolume = $validated['volume'];
@@ -109,7 +109,7 @@ class GrainDeliveryController extends Controller
             'volume' => 'required|numeric|min:0.1', // NETTO или БРУТТО — зависит от tare_weight
             'delivery_date' => 'required|date',
             'vehicle_id' => 'nullable|exists:vehicles,id',
-            'driver_id' => 'nullable|exists:drivers,id',
+            'driver_id' => 'nullable|exists:users,id',
             'tare_weight' => 'nullable|numeric|min:0'
         ]);
 

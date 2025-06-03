@@ -19,7 +19,7 @@ class GrainShipmentController extends Controller
             'volume' => 'required|numeric|min:0.1', // Брутто
             'shipment_date' => 'required|date',
             'vehicle_id' => 'required|exists:vehicles,id',
-            'driver_id' => 'required|exists:drivers,id',
+            'driver_id' => 'nullable|exists:users,id',
         ]);
 
         $vehicle = Vehicle::with('latestTareMeasurement')->findOrFail($validated['vehicle_id']);
@@ -85,7 +85,7 @@ class GrainShipmentController extends Controller
             'volume' => 'required|numeric|min:0.1',
             'shipment_date' => 'required|date',
             'vehicle_id' => 'required|exists:vehicles,id',
-            'driver_id' => 'required|exists:drivers,id',
+            'driver_id' => 'nullable|exists:users,id',
             'tare_weight' => 'nullable|numeric|min:0'
         ]);
 

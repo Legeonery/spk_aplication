@@ -32,7 +32,7 @@ class GrainDelivery extends Model
 
     public function driver()
     {
-        return $this->belongsTo(Driver::class);
+        return $this->belongsTo(User::class, 'driver_id');
     }
 
     public function vehicle()

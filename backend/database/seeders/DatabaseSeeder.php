@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             GrainTypesSeeder::class,
             DriversSeeder::class,
             VehiclesSeeder::class,
+            LicenseCategorySeeder::class,
         ]);
 
         DB::table('vehicle_kinds')->insert([

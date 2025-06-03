@@ -17,6 +17,9 @@ use App\Http\Controllers\SparePartUsageController;
 use App\Http\Controllers\SparePartReportController;
 use App\Http\Controllers\VehicleKindController;
 use App\Http\Controllers\TareMeasurementController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\LicenseCategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -71,4 +74,9 @@ Route::middleware('jwt.auth')->group(function () {
     Route::post('/tare-measurements', [TareMeasurementController::class, 'store']);
     Route::get('/tare-measurements/check', [TareMeasurementController::class, 'check']);
     Route::patch('/vehicles/{vehicle}/toggle-availability', [VehicleController::class, 'toggleAvailability']);
+    Route::get('/users', [UserController::class, 'index']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::get('/roles', [RoleController::class, 'index']);
+    Route::get('/license-categories', [LicenseCategoryController::class, 'index']);
 });

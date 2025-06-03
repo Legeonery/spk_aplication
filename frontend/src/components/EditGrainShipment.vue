@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, watchEffect } from 'vue'
 import api from '@/services/api'
 
 const props = defineProps({
@@ -26,37 +26,38 @@ const loading = ref(false)
 const vehicles = ref([])
 const drivers = ref([])
 
-watch(
-  () => props.show,
-  async (val) => {
-    if (val && props.shipment) {
-      try {
-        const [vRes, dRes] = await Promise.all([api.get('/vehicles'), api.get('/drivers')])
-        vehicles.value = vRes.data
-        drivers.value = dRes.data
+watchEffect(async () => {
+  if (!props.show || !props.shipment) return
 
-        const vehicle = vRes.data.find((v) => v.id === props.shipment.vehicle_id)
-        const tare = Number(props.shipment.tare_weight)
-        const netto = Number(props.shipment.volume || 0)
+  try {
+    const [vRes, dRes] = await Promise.all([
+      api.get('/vehicles'),
+      api.get('/users', { params: { role: 'Водитель' } }),
+    ])
 
-        form.value = {
-          grain_type_id: props.shipment.grain_type_id,
-          volume: netto + tare,
-          shipment_date: props.shipment.shipment_date,
-          vehicle_id: props.shipment.vehicle_id,
-          driver_id: props.shipment.driver_id,
-          tare_weight: tare,
-          max_weight: vehicle?.max_weight || null,
-          id: props.shipment.id,
-        }
+    vehicles.value = vRes.data
+    drivers.value = dRes.data
 
-        error.value = ''
-      } catch (err) {
-        console.error('Ошибка загрузки транспорта или водителей', err)
-      }
+    const vehicle = vRes.data.find((v) => v.id === props.shipment.vehicle_id)
+    const tare = Number(props.shipment.tare_weight)
+    const netto = Number(props.shipment.volume || 0)
+
+    form.value = {
+      grain_type_id: props.shipment.grain_type_id,
+      volume: netto + tare,
+      shipment_date: props.shipment.shipment_date,
+      vehicle_id: props.shipment.vehicle_id,
+      driver_id: props.shipment.driver_id,
+      tare_weight: tare,
+      max_weight: vehicle?.max_weight || null,
+      id: props.shipment.id,
     }
+
+    error.value = ''
+  } catch (err) {
+    console.error('Ошибка загрузки транспорта или водителей', err)
   }
-)
+})
 
 watch(
   () => form.value.vehicle_id,

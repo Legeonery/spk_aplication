@@ -27,7 +27,7 @@ const loadOptions = async () => {
   const [grainsRes, vehiclesRes, driversRes] = await Promise.all([
     api.get('/grain-types'),
     api.get('/vehicles'),
-    api.get('/drivers'),
+    api.get('/users', { params: { role: 'Водитель' } }),
   ])
   grainTypes.value = grainsRes.data
   vehicles.value = vehiclesRes.data
@@ -145,8 +145,10 @@ const submit = async () => {
           </p>
 
           <select v-model="form.driver_id" class="w-full border px-3 py-2 rounded">
-            <option value="">Выберите водителя</option>
-            <option v-for="d in drivers" :key="d.id" :value="d.id">{{ d.name }}</option>
+            <option disabled value="">Выберите водителя</option>
+            <option v-for="d in drivers" :key="d.id" :value="d.id">
+              {{ d.name }}
+            </option>
           </select>
 
           <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>

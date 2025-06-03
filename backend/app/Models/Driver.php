@@ -9,5 +9,17 @@ class Driver extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'license_number'];
+    protected $fillable = [
+        'user_id',
+        'license_number',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function licenseCategories()
+    {
+        return $this->belongsToMany(LicenseCategory::class, 'driver_license');
+    }
 }

@@ -77,11 +77,8 @@ watch(
     </div>
 
     <transition name="fade" mode="out-in">
-      <table
-        v-if="paginatedDeliveries.length"
-        key="table"
-        class="w-full text-sm border border-gray-200 rounded overflow-hidden shadow-sm"
-      >
+      <table v-if="paginatedDeliveries.length" key="table"
+        class="w-full text-sm border border-gray-200 rounded overflow-hidden shadow-sm">
         <thead class="bg-blue-50 text-left">
           <tr>
             <th class="px-4 py-3 font-semibold">Дата</th>
@@ -92,21 +89,19 @@ watch(
           </tr>
         </thead>
         <tbody>
-          <tr
-            v-for="d in paginatedDeliveries"
-            :key="d.id"
-            class="hover:bg-blue-50 transition-colors border-t"
-          >
+          <tr v-for="d in paginatedDeliveries" :key="d.id" class="hover:bg-blue-50 transition-colors border-t">
             <td class="px-4 py-2">{{ d.delivery_date }}</td>
             <td class="px-4 py-2">{{ d.grain_type?.name ?? '—' }}</td>
             <td class="px-4 py-2">{{ d.volume }}</td>
-            <td class="px-4 py-2">{{ d.driver?.name ?? '—' }}</td>
             <td class="px-4 py-2">
-              <button
-                @click="editDelivery(d)"
-                class="text-blue-600 hover:underline text-sm"
-                title="Редактировать"
-              >
+              <div v-if="d.driver">
+                <div class="font-medium">{{ d.driver.name }}</div>
+                <div class="text-xs text-gray-500">{{ d.driver.email }}</div>
+              </div>
+              <span v-else>—</span>
+            </td>
+            <td class="px-4 py-2">
+              <button @click="editDelivery(d)" class="text-blue-600 hover:underline text-sm" title="Редактировать">
                 ✏️
               </button>
             </td>
@@ -119,34 +114,23 @@ watch(
     </transition>
 
     <div v-if="totalPages > 1" class="flex justify-center items-center gap-2 mt-6 flex-wrap">
-      <button
-        v-for="page in visiblePages"
-        :key="page"
-        @click="currentPage = page"
-        :class="[
-          'px-3 py-1 rounded border text-sm',
-          page === currentPage
-            ? 'bg-blue-600 text-white border-blue-600'
-            : 'bg-white text-gray-700 hover:bg-blue-100 border-gray-300',
-        ]"
-      >
+      <button v-for="page in visiblePages" :key="page" @click="currentPage = page" :class="[
+        'px-3 py-1 rounded border text-sm',
+        page === currentPage
+          ? 'bg-blue-600 text-white border-blue-600'
+          : 'bg-white text-gray-700 hover:bg-blue-100 border-gray-300',
+      ]">
         {{ page }}
       </button>
     </div>
   </div>
-  <EditGrainDelivery
-    v-if="selectedDelivery"
-    :key="selectedDelivery.id"
-    :delivery="selectedDelivery"
-    :show="showEditDeliveryModal"
-    @close="showEditDeliveryModal = false"
-    @success="
+  <EditGrainDelivery v-if="selectedDelivery" :key="selectedDelivery.id" :delivery="selectedDelivery"
+    :show="showEditDeliveryModal" @close="showEditDeliveryModal = false" @success="
       () => {
         showEditDeliveryModal = false
         $emit('refresh')
       }
-    "
-  />
+    " />
 </template>
 
 <style scoped>

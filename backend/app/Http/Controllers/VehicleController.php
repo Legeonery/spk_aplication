@@ -20,7 +20,7 @@ class VehicleController extends Controller
             'vehicle_kind_id' => 'required|exists:vehicle_kinds,id',
             'type' => 'required|string|in:работа в поле,привоз,отгрузка,универсальный',
             'status' => 'required|in:на ходу,на ремонте,не на ходу',
-            'driver_id' => 'nullable|exists:drivers,id',
+            'driver_id' => 'nullable|exists:users,id',
             'is_available' => 'boolean',
             'notes' => 'nullable|string',
         ];
@@ -51,7 +51,7 @@ class VehicleController extends Controller
             'vehicle_kind_id' => 'exists:vehicle_kinds,id',
             'type' => 'required|string|in:работа в поле,привоз,отгрузка,универсальный',
             'status' => 'in:на ходу,на ремонте,не на ходу',
-            'driver_id' => 'nullable|exists:drivers,id',
+            'driver_id' => 'nullable|exists:users,id',
             'is_available' => 'boolean',
             'notes' => 'nullable|string',
         ];
