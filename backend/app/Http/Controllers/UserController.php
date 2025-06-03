@@ -65,6 +65,7 @@ class UserController extends Controller
             'role' => 'required',
             'categories' => 'nullable|string',
             'password' => 'nullable|string|min:6',
+            'is_active' => 'required|boolean', // ✅
         ]);
 
         $role = Role::where('name', $validated['role'])->firstOrFail();
@@ -72,9 +73,10 @@ class UserController extends Controller
         $user->name = $validated['name'];
         $user->email = $validated['email'];
         $user->role_id = $role->id;
+        $user->is_active = $validated['is_active'];
 
         if (!empty($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
+            $user->password = \Hash::make($validated['password']);
         }
 
         $user->save();
@@ -84,8 +86,13 @@ class UserController extends Controller
             $categoryCodes = array_map('trim', explode(',', $validated['categories'] ?? ''));
             $categoryIds = LicenseCategory::whereIn('code', $categoryCodes)->pluck('id');
             $driver->licenseCategories()->sync($categoryIds);
+        } else {
+            $user->driver()?->delete();
         }
 
-        return response()->json(['message' => 'Пользователь обновлён', 'user' => $user->load('role')]);
+        return response()->json([
+            'message' => 'Пользователь обновлён',
+            'user' => $user->load('role')
+        ]);
     }
 }

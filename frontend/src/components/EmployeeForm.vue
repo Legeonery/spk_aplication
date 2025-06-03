@@ -20,6 +20,7 @@ const form = ref({
     password: '',
     role: null,
     categoryObjects: [],
+    is_active: true,
 })
 
 const isEditMode = computed(() => !!props.user?.id)
@@ -34,6 +35,7 @@ watchEffect(() => {
             password: '',
             role: roles.value.find(r => r.name === user.role?.name) || null,
             categoryObjects: user.driver?.license_categories || [],
+            is_active: user.is_active ?? true,
         }
     } else if (props.show && !props.user) {
         form.value = {
@@ -42,6 +44,7 @@ watchEffect(() => {
             password: '',
             role: null,
             categoryObjects: [],
+            is_active: true,
         }
     }
 })
@@ -58,6 +61,7 @@ const submit = async () => {
             categories: form.value.role?.name === 'Водитель'
                 ? form.value.categoryObjects.map(c => c.code).join(',')
                 : null,
+            is_active: form.value.is_active,
         }
 
         if (isEditMode.value) {
@@ -122,6 +126,14 @@ onMounted(async () => {
                 <input v-model="form.password" :required="!isEditMode" type="password"
                     class="w-full border rounded p-2" />
                 <small v-if="isEditMode" class="text-gray-500">Оставьте пустым, чтобы не менять</small>
+            </div>
+            <div v-if="isEditMode" class="flex items-center gap-2">
+                <span class="text-sm font-medium text-gray-700">Статус:</span>
+                <button type="button" class="px-3 py-1 rounded text-white text-sm font-semibold"
+                    :class="form.is_active ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'"
+                    @click="form.is_active = !form.is_active">
+                    {{ form.is_active ? 'Активен' : 'Неактивен' }}
+                </button>
             </div>
 
             <div>
