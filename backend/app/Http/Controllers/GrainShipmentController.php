@@ -37,9 +37,16 @@ class GrainShipmentController extends Controller
         $tareWeight = $tare->tare_weight;
         $nettoVolume = max($validated['volume'] - $tareWeight, 0);
 
+        // 💡 Добавляем max_weight
+        $maxWeight = $vehicle->max_weight;
+
         $shipment = GrainShipment::create(array_merge(
             $validated,
-            ['volume' => $nettoVolume, 'tare_weight' => $tareWeight]
+            [
+                'volume' => $nettoVolume,
+                'tare_weight' => $tareWeight,
+                'max_weight' => $maxWeight
+            ]
         ));
 
         $tare->delete();
@@ -82,11 +89,10 @@ class GrainShipmentController extends Controller
             'tare_weight' => 'nullable|numeric|min:0'
         ]);
 
-        // Если tare_weight пришёл явно — volume считается уже нетто
-        $tareWeight = $validated['tare_weight'] ?? null;
+        $tareWeight = $validated['tare_weight'];
         $nettoVolume = $validated['volume'];
 
-        if ($tareWeight === null) {
+        if (!is_numeric($tareWeight) || $tareWeight <= 0) {
             $vehicle = Vehicle::with('latestTareMeasurement')->find($validated['vehicle_id']);
 
             if ($vehicle && in_array($vehicle->type, ['отгрузка', 'универсальный'])) {

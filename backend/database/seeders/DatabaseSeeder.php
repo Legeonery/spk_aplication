@@ -25,12 +25,18 @@ class DatabaseSeeder extends Seeder
             DriversSeeder::class,
             VehiclesSeeder::class,
         ]);
+
         DB::table('vehicle_kinds')->insert([
             ['name' => 'трактор'],
             ['name' => 'камаз'],
             ['name' => 'комбайн'],
             ['name' => 'погрузчик'],
             ['name' => 'гусеничная техника'],
+        ]);
+        DB::table('roles')->insert([
+            ['name' => 'admin'],
+            ['name' => 'warehouse_manager'],
+            ['name' => 'driver'],
         ]);
     }
 }

@@ -17,6 +17,7 @@ class GrainShipment extends Model
         'vehicle_id',
         'driver_id',
         'tare_weight',
+        'max_weight'
     ];
 
     public function warehouse()

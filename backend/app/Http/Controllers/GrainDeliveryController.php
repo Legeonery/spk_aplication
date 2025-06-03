@@ -25,28 +25,38 @@ class GrainDeliveryController extends Controller
         ]);
 
         $nettoVolume = $validated['volume'];
-        $tareWeight = null;
         $vehicle = Vehicle::with('latestTareMeasurement')->find($validated['vehicle_id']);
+        $tareWeight = null;
+        $maxWeight = null;
         $showTareReminder = false;
 
-        if ($vehicle && in_array($vehicle->type, ['привоз', 'универсальный'])) {
-            $tare = $vehicle->latestTareMeasurement;
+        if ($vehicle) {
+            $maxWeight = $vehicle->max_weight;
 
-            if ($tare) {
-                $tareWeight = $tare->tare_weight;
-                $nettoVolume = max($validated['volume'] - $tareWeight, 0);
-                $tare->increment('delivery_count');
+            if (in_array($vehicle->type, ['привоз', 'универсальный'])) {
+                $tare = $vehicle->latestTareMeasurement;
 
-                if ($tare->delivery_count >= 10) {
-                    $tare->delete();
-                    $showTareReminder = true;
+                if ($tare) {
+                    $tareWeight = $tare->tare_weight;
+                    $nettoVolume = max($validated['volume'] - $tareWeight, 0);
+                    $tare->increment('delivery_count');
+
+                    if ($tare->delivery_count >= 10) {
+                        $tare->delete();
+                        $showTareReminder = true;
+                    }
                 }
             }
         }
 
+
         $delivery = GrainDelivery::create(array_merge(
             $validated,
-            ['volume' => $nettoVolume, 'tare_weight' => $tareWeight]
+            [
+                'volume' => $nettoVolume,
+                'tare_weight' => $tareWeight,
+                'max_weight' => $maxWeight
+            ]
         ));
 
         WarehouseGrain::updateOrCreate(

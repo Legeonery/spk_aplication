@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import api from '@/services/api'
 
 const props = defineProps({
@@ -40,13 +40,14 @@ watch(
     if (val && props.delivery) {
       await loadOptions()
 
-      const tare = parseFloat(props.delivery.tare_weight || 0)
+      const tare = parseFloat(props.delivery.tare_weight)
       const netto = parseFloat(props.delivery.volume || 0)
 
       form.value = {
         ...props.delivery,
         volume: tare + netto,
         tare_weight: tare,
+        max_weight: props.delivery.max_weight,
       }
 
       error.value = ''
@@ -58,12 +59,17 @@ watch(
 watch(
   () => form.value.vehicle_id,
   (vehicleId) => {
-    if (!vehicleId) return
-
+    if (form.value.id) return
     const vehicle = vehicles.value.find((v) => v.id === parseInt(vehicleId))
     const tare = parseFloat(vehicle?.latest_tare_measurement?.tare_weight || 0)
     form.value.tare_weight = tare
   },
+)
+
+const selectedTareWeight = computed(() =>
+  form.value.tare_weight !== null && !isNaN(form.value.tare_weight)
+    ? form.value.tare_weight
+    : null
 )
 
 const submit = async () => {
@@ -84,6 +90,10 @@ const submit = async () => {
     return
   }
 
+  if (form.value.max_weight && gross > form.value.max_weight) {
+    error.value = `Вес Брутто (${gross} кг) не может превышать допустимый вес ТС (${form.value.max_weight} кг)`
+    return
+  }
   const netto = gross - tare
 
   try {
@@ -106,10 +116,7 @@ const submit = async () => {
 
 <template>
   <transition name="fade">
-    <div
-      v-if="show"
-      class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 backdrop-blur-sm"
-    >
+    <div v-if="show" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 backdrop-blur-sm">
       <div class="bg-white rounded-xl shadow p-6 w-full max-w-md relative animate-fade-in">
         <button class="absolute top-3 right-3" @click="$emit('close')">✖</button>
         <h2 class="text-xl font-bold mb-4">Редактировать поставку</h2>
@@ -120,20 +127,22 @@ const submit = async () => {
             <option v-for="g in grainTypes" :key="g.id" :value="g.id">{{ g.name }}</option>
           </select>
 
-          <input
-            type="number"
-            v-model.number="form.volume"
-            placeholder="Объём (кг)"
-            class="w-full border px-3 py-2 rounded"
-          />
+          <input type="number" v-model.number="form.volume" placeholder="Объём (кг)"
+            class="w-full border px-3 py-2 rounded" />
           <input type="date" v-model="form.delivery_date" class="w-full border px-3 py-2 rounded" />
+          <div v-if="form.id" class="w-full border rounded px-4 py-2 bg-gray-100 text-gray-600">
+            Транспорт:
+            <strong>
+              {{
+                vehicles.find((v) => v.id === form.vehicle_id)?.number
+              }}
+              ({{vehicles.find((v) => v.id === form.vehicle_id)?.type}})
+            </strong>
+          </div>
 
-          <select v-model="form.vehicle_id" class="w-full border px-3 py-2 rounded">
-            <option value="">Выберите транспорт</option>
-            <option v-for="v in vehicles" :key="v.id" :value="v.id">
-              {{ v.number }} ({{ v.type }})
-            </option>
-          </select>
+          <p v-if="selectedTareWeight !== null" class="text-sm text-gray-600">
+            ⚖️ Тара ТС: <strong>{{ selectedTareWeight }} кг.</strong>
+          </p>
 
           <select v-model="form.driver_id" class="w-full border px-3 py-2 rounded">
             <option value="">Выберите водителя</option>
