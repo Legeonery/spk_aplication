@@ -6,138 +6,6 @@ use App\Http\Controllers\Controller;
 
 /**
  * @OA\Post(
- *     path = "/api/posts",
- *     summary = "Создание записи",
- *     tags = { "Post" },
- *     security = {{ "bearerAuth": {} }},
- *     @OA\RequestBody(
- *         @OA\JsonContent(
- *             allOf = {
- *                 @OA\Schema(
- *                     @OA\Property(property = "title", type = "string", example = "some title"),
- *                     @OA\Property(property = "likes", type = "integer", example = 20),
- *                 )
- *             }
- *         )
- *     ),
- *     @OA\Response(
- *         response = 200,
- *         description = "OK",
- *         @OA\JsonContent(
- *             @OA\Property(property = "data", type = "object",
- *                 @OA\Property(property = "id", type = "integer", example = 1),
- *                 @OA\Property(property = "title", type = "string", example = "some title"),
- *                 @OA\Property(property = "likes", type = "integer", example = 20),
- *             ),
- *         ),
- *     ),
- * ),
- * @OA\Get(
- *     path = "/api/posts",
- *     summary = "Получение списка записей",
- *     tags = { "Post" },
- *     security = {{ "bearerAuth": {} }},
- *     @OA\Response(
- *         response = 200,
- *         description = "OK",
- *         @OA\JsonContent(
- *             @OA\Property(property = "data", type = "array",@OA\Items(
- *                 @OA\Property(property = "id", type = "integer", example = 1),
- *                 @OA\Property(property = "title", type = "string", example = "some title"),
- *                 @OA\Property(property = "likes", type = "integer", example = 20), 
- *             )),
- *         ),
- *     ),
- * ),
- * @OA\Get(
- *     path = "/api/posts/{post}",
- *     summary = "Получение единичной записи",
- *     tags = { "Post" },
- *     security = {{ "bearerAuth": {} }},
- *     @OA\Parameter(
- *         description = "ID записи",
- *         in = "path",
- *         name = "post",
- *         required = true,
- *         example = 1
- *     ),
- *     @OA\Response(
- *         response = 200,
- *         description = "OK",
- *         @OA\JsonContent(
- *             @OA\Property(property = "data", type = "object",
- *                 @OA\Property(property = "id", type = "integer", example = 1),
- *                 @OA\Property(property = "title", type = "string", example = "some title"),
- *                 @OA\Property(property = "likes", type = "integer", example = 20),
- *             ),
- *         ),
- *     ),
- *     @OA\Response(
- *         response = 404,
- *         description = "Запись с данным индификатором не найдена",
- *         @OA\JsonContent(
- *             @OA\Property(property = "message", type = "string", example = "No query results for model [App\\Models\\Post] 1")
- *         )
- *     ),
- * ),
- * @OA\Patch(
- *     path = "/api/posts/{post}",
- *     summary = "Обновление записи",
- *     tags = { "Post" },
- *     security = {{ "bearerAuth": {} }},
- *     @OA\Parameter(
- *         description = "ID записи",
- *         in = "path",
- *         name = "post",
- *         required = true,
- *         example = 1
- *     ),
- * 
- *     @OA\RequestBody(
- *         @OA\JsonContent(
- *             allOf = {
- *                 @OA\Schema(
- *                     @OA\Property(property = "title", type = "string", example = "some title for you"),
- *                     @OA\Property(property = "likes", type = "integer", example = 25),
- *                 )
- *             }
- *         )
- *     ),
- * 
- *     @OA\Response(
- *         response = 200,
- *         description = "OK",
- *         @OA\JsonContent(
- *             @OA\Property(property = "data", type = "object",
- *                 @OA\Property(property = "id", type = "integer", example = 1),
- *                 @OA\Property(property = "title", type = "string", example = "some title for you"),
- *                 @OA\Property(property = "likes", type = "integer", example = 20),
- *             ),
- *         ),
- *     ),
- * ),
- * 
- * @OA\Delete(
- *     path = "/api/posts/{post}",
- *     summary = "Удаление",
- *     tags = { "Post" },
- *     security = {{ "bearerAuth": {} }},
- *     @OA\Parameter(
- *         description = "ID записи",
- *         in = "path",
- *         name = "post",
- *         required = true,
- *         example = 1
- *     ),
- *     @OA\Response(
- *         response = 200,
- *         description = "OK",
- *         @OA\JsonContent(
- *             @OA\Property(property = "message", type = "string", example = "done"),
- *         ),
- *     ),
- * ),
- * @OA\Post(
  *     path = "/api/auth/login",
  *     summary = "Получение токека авторизации",
  *     tags = {"Auth"},
@@ -673,6 +541,227 @@ use App\Http\Controllers\Controller;
  *         @OA\JsonContent(
  *             @OA\Property(property="id", type="integer", example=10),
  *             @OA\Property(property="type", type="string", example="out")
+ *         )
+ *     )
+ * )
+ * @OA\Get(
+ *     path="/api/users",
+ *     summary="Получение списка пользователей",
+ *     tags={"Users"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Успешно",
+ *         @OA\JsonContent(type="array", @OA\Items(
+ *             @OA\Property(property="id", type="integer", example=1),
+ *             @OA\Property(property="name", type="string", example="Иван Иванов"),
+ *             @OA\Property(property="email", type="string", example="ivan@example.com"),
+ *             @OA\Property(property="role", type="object",
+ *                 @OA\Property(property="id", type="integer"),
+ *                 @OA\Property(property="name", type="string", example="Водитель")
+ *             ),
+ *             @OA\Property(property="is_active", type="boolean", example=true)
+ *         ))
+ *     )
+ * )
+ * @OA\Post(
+ *     path="/api/users",
+ *     summary="Создание нового пользователя",
+ *     tags={"Users"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"name", "email", "password", "role"},
+ *             @OA\Property(property="name", type="string", example="Иван Иванов"),
+ *             @OA\Property(property="email", type="string", example="ivan@example.com"),
+ *             @OA\Property(property="password", type="string", example="securepassword"),
+ *             @OA\Property(property="role", type="string", example="Водитель"),
+ *             @OA\Property(property="categories", type="string", example="B,C,E")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Пользователь создан",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Пользователь создан"),
+ *             @OA\Property(property="user", type="object",
+ *                 @OA\Property(property="id", type="integer", example=7),
+ *                 @OA\Property(property="name", type="string", example="Иван Иванов")
+ *             )
+ *         )
+ *     )
+ * )
+ * @OA\Put(
+ *     path="/api/users/{user}",
+ *     summary="Обновление данных пользователя",
+ *     tags={"Users"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="user",
+ *         in="path",
+ *         required=true,
+ *         @OA\Schema(type="integer", example=7)
+ *     ),
+ *     @OA\RequestBody(
+ *         @OA\JsonContent(
+ *             @OA\Property(property="name", type="string", example="Иван Иванов"),
+ *             @OA\Property(property="email", type="string", example="ivan@example.com"),
+ *             @OA\Property(property="password", type="string", example="новый_пароль"),
+ *             @OA\Property(property="role", type="string", example="Водитель"),
+ *             @OA\Property(property="categories", type="string", example="B,C,E"),
+ *             @OA\Property(property="is_active", type="boolean", example=true)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Пользователь обновлён",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Пользователь обновлён")
+ *         )
+ *     )
+ * )
+ * @OA\Get(
+ *     path="/api/roles",
+ *     summary="Получение списка ролей",
+ *     tags={"Roles"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Список ролей",
+ *         @OA\JsonContent(type="array", @OA\Items(
+ *             @OA\Property(property="id", type="integer", example=1),
+ *             @OA\Property(property="name", type="string", example="Водитель")
+ *         ))
+ *     )
+ * )
+  * @OA\Get(
+ *     path="/api/license-categories",
+ *     summary="Получение списка категорий водительских прав",
+ *     tags={"LicenseCategories"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Список категорий",
+ *         @OA\JsonContent(type="array", @OA\Items(
+ *             @OA\Property(property="id", type="integer", example=1),
+ *             @OA\Property(property="code", type="string", example="B")
+ *         ))
+ *     )
+ * )
+  * @OA\Post(
+ *     path="/api/tare-measurements",
+ *     summary="Сохранение или обновление замера тары",
+ *     tags={"TareMeasurements"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"vehicle_id", "tare_weight"},
+ *             @OA\Property(property="vehicle_id", type="integer", example=3),
+ *             @OA\Property(property="tare_weight", type="number", example=18000)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Тара сохранена",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Тара сохранена"),
+ *             @OA\Property(property="data", type="object",
+ *                 @OA\Property(property="vehicle_id", type="integer", example=3),
+ *                 @OA\Property(property="tare_weight", type="number", example=18000),
+ *                 @OA\Property(property="delivery_count", type="integer", example=1)
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=422,
+ *         description="Ошибка валидации",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Тара не может превышать max_weight ТС")
+ *         )
+ *     )
+ * )
+ * @OA\Get(
+ *     path="/api/tare-measurements/check",
+ *     summary="Проверка наличия замера тары",
+ *     tags={"TareMeasurements"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="vehicle_id",
+ *         in="query",
+ *         description="ID транспортного средства",
+ *         required=true,
+ *         @OA\Schema(type="integer", example=3)
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Результат проверки",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="exists", type="boolean", example=true)
+ *         )
+ *     )
+ * )
+ * @OA\Post(
+ *     path="/api/vehicles",
+ *     summary="Добавление нового транспортного средства",
+ *     tags={"Vehicles"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"number", "vehicle_kind_id", "max_weight", "status"},
+ *             @OA\Property(property="number", type="string", example="А123ВС78"),
+ *             @OA\Property(property="vehicle_kind_id", type="integer", example=1),
+ *             @OA\Property(property="type", type="string", example="КамАЗ"),
+ *             @OA\Property(property="max_weight", type="number", example=24000),
+ *             @OA\Property(property="status", type="string", enum={"available", "repair"}, example="available"),
+ *             @OA\Property(property="repair_reason", type="string", nullable=true, example="Замена тормозов"),
+ *             @OA\Property(property="driver_id", type="integer", nullable=true, example=2)
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="ТС добавлено",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Транспорт добавлен"),
+ *             @OA\Property(property="vehicle_id", type="integer", example=10)
+ *         )
+ *     )
+ * )
+ * @OA\Patch(
+ *     path="/api/vehicles/{vehicle}/status",
+ *     summary="Обновление статуса транспортного средства",
+ *     tags={"Vehicles"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="vehicle",
+ *         in="path",
+ *         required=true,
+ *         description="ID транспортного средства",
+ *         @OA\Schema(type="integer", example=4)
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"status"},
+ *             @OA\Property(property="status", type="string", enum={"available", "repair"}, example="repair"),
+ *             @OA\Property(property="repair_reason", type="string", nullable=true, example="Поломка двигателя")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Статус обновлён",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Статус обновлён"),
+ *             @OA\Property(property="status", type="string", example="repair")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="ТС не найдено",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Not Found")
  *         )
  *     )
  * )

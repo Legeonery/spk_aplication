@@ -1,309 +1,12 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "My DOC API",
+        "title": "SPK API",
+        "description": "Документация API для системы учёта СПК Земледелец",
         "version": "1.0.0"
     },
     "paths": {
         "/api/": {},
-        "/api/posts": {
-            "get": {
-                "tags": [
-                    "Post"
-                ],
-                "summary": "Получение списка записей",
-                "operationId": "47925884fb256655799d0ffd57c2a894",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "title": {
-                                                        "type": "string",
-                                                        "example": "some title"
-                                                    },
-                                                    "likes": {
-                                                        "type": "integer",
-                                                        "example": 20
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Post"
-                ],
-                "summary": "Создание записи",
-                "operationId": "7999e1ba2e5585f522fc5d9d27915557",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "allOf": [
-                                    {
-                                        "properties": {
-                                            "title": {
-                                                "type": "string",
-                                                "example": "some title"
-                                            },
-                                            "likes": {
-                                                "type": "integer",
-                                                "example": 20
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "title": {
-                                                    "type": "string",
-                                                    "example": "some title"
-                                                },
-                                                "likes": {
-                                                    "type": "integer",
-                                                    "example": 20
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/posts/{post}": {
-            "get": {
-                "tags": [
-                    "Post"
-                ],
-                "summary": "Получение единичной записи",
-                "operationId": "c5253d16752aa5889a1fa6e763471311",
-                "parameters": [
-                    {
-                        "name": "post",
-                        "in": "path",
-                        "description": "ID записи",
-                        "required": true,
-                        "example": 1
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "title": {
-                                                    "type": "string",
-                                                    "example": "some title"
-                                                },
-                                                "likes": {
-                                                    "type": "integer",
-                                                    "example": 20
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Запись с данным индификатором не найдена",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "No query results for model [App\\\\Models\\\\Post] 1"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Post"
-                ],
-                "summary": "Удаление",
-                "operationId": "6089ca174ecd6f787461d01e729e93c8",
-                "parameters": [
-                    {
-                        "name": "post",
-                        "in": "path",
-                        "description": "ID записи",
-                        "required": true,
-                        "example": 1
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "done"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "patch": {
-                "tags": [
-                    "Post"
-                ],
-                "summary": "Обновление записи",
-                "operationId": "58e7e5c3e0c1e1f02bc488b3be5eb91b",
-                "parameters": [
-                    {
-                        "name": "post",
-                        "in": "path",
-                        "description": "ID записи",
-                        "required": true,
-                        "example": 1
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "allOf": [
-                                    {
-                                        "properties": {
-                                            "title": {
-                                                "type": "string",
-                                                "example": "some title for you"
-                                            },
-                                            "likes": {
-                                                "type": "integer",
-                                                "example": 25
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "title": {
-                                                    "type": "string",
-                                                    "example": "some title for you"
-                                                },
-                                                "likes": {
-                                                    "type": "integer",
-                                                    "example": 20
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/auth/login": {
             "post": {
                 "tags": [
@@ -1727,6 +1430,615 @@
                     }
                 ]
             }
+        },
+        "/api/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Получение списка пользователей",
+                "operationId": "11e48c6c3cde55043c862b246db19dc9",
+                "responses": {
+                    "200": {
+                        "description": "Успешно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Иван Иванов"
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "example": "ivan@example.com"
+                                            },
+                                            "role": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Водитель"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "is_active": {
+                                                "type": "boolean",
+                                                "example": true
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Создание нового пользователя",
+                "operationId": "3ed7369ee66e5775ed75ec3f2cb59ef1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "role"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Иван Иванов"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "ivan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "securepassword"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "Водитель"
+                                    },
+                                    "categories": {
+                                        "type": "string",
+                                        "example": "B,C,E"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Пользователь создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Пользователь создан"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 7
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Иван Иванов"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/{user}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Обновление данных пользователя",
+                "operationId": "75571146886cf1ee38c5d265be59ee3c",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 7
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Иван Иванов"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "ivan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "новый_пароль"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "Водитель"
+                                    },
+                                    "categories": {
+                                        "type": "string",
+                                        "example": "B,C,E"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Пользователь обновлён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Пользователь обновлён"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/roles": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Получение списка ролей",
+                "operationId": "a0daa85aa159b805a35a61e6a6e2be29",
+                "responses": {
+                    "200": {
+                        "description": "Список ролей",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Водитель"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/license-categories": {
+            "get": {
+                "tags": [
+                    "LicenseCategories"
+                ],
+                "summary": "Получение списка категорий водительских прав",
+                "operationId": "d8dbdbca38e0ca03434011bce0a47872",
+                "responses": {
+                    "200": {
+                        "description": "Список категорий",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 1
+                                            },
+                                            "code": {
+                                                "type": "string",
+                                                "example": "B"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tare-measurements": {
+            "post": {
+                "tags": [
+                    "TareMeasurements"
+                ],
+                "summary": "Сохранение или обновление замера тары",
+                "operationId": "f20fe4ebbf17ecdc28f4a17f75aa5ba3",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "vehicle_id",
+                                    "tare_weight"
+                                ],
+                                "properties": {
+                                    "vehicle_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "tare_weight": {
+                                        "type": "number",
+                                        "example": 18000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Тара сохранена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тара сохранена"
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "vehicle_id": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                },
+                                                "tare_weight": {
+                                                    "type": "number",
+                                                    "example": 18000
+                                                },
+                                                "delivery_count": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Тара не может превышать max_weight ТС"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tare-measurements/check": {
+            "get": {
+                "tags": [
+                    "TareMeasurements"
+                ],
+                "summary": "Проверка наличия замера тары",
+                "operationId": "0a284ec217da14901f2c73c133fc0d3c",
+                "parameters": [
+                    {
+                        "name": "vehicle_id",
+                        "in": "query",
+                        "description": "ID транспортного средства",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 3
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Результат проверки",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "exists": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/vehicles": {
+            "post": {
+                "tags": [
+                    "Vehicles"
+                ],
+                "summary": "Добавление нового транспортного средства",
+                "operationId": "05084b6368269783322a31d5b4499c5f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "number",
+                                    "vehicle_kind_id",
+                                    "max_weight",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "number": {
+                                        "type": "string",
+                                        "example": "А123ВС78"
+                                    },
+                                    "vehicle_kind_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "КамАЗ"
+                                    },
+                                    "max_weight": {
+                                        "type": "number",
+                                        "example": 24000
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "available",
+                                            "repair"
+                                        ],
+                                        "example": "available"
+                                    },
+                                    "repair_reason": {
+                                        "type": "string",
+                                        "example": "Замена тормозов",
+                                        "nullable": true
+                                    },
+                                    "driver_id": {
+                                        "type": "integer",
+                                        "example": 2,
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "ТС добавлено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Транспорт добавлен"
+                                        },
+                                        "vehicle_id": {
+                                            "type": "integer",
+                                            "example": 10
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/vehicles/{vehicle}/status": {
+            "patch": {
+                "tags": [
+                    "Vehicles"
+                ],
+                "summary": "Обновление статуса транспортного средства",
+                "operationId": "49c7cedebdc57b9ae62c9d479804b95d",
+                "parameters": [
+                    {
+                        "name": "vehicle",
+                        "in": "path",
+                        "description": "ID транспортного средства",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 4
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "available",
+                                            "repair"
+                                        ],
+                                        "example": "repair"
+                                    },
+                                    "repair_reason": {
+                                        "type": "string",
+                                        "example": "Поломка двигателя",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Статус обновлён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Статус обновлён"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "repair"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "ТС не найдено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Not Found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -1739,32 +2051,48 @@
     },
     "tags": [
         {
-            "name": "Post",
-            "description": "Post"
-        },
-        {
-            "name": "Auth",
-            "description": "Auth"
-        },
-        {
             "name": "WarehousesPost",
-            "description": "WarehousesPost"
+            "description": "Операции с данными складов"
         },
         {
             "name": "GrainDeliveries",
-            "description": "GrainDeliveries"
+            "description": "Поставки зерна"
         },
         {
             "name": "GrainShipments",
-            "description": "GrainShipments"
+            "description": "Отгрузки зерна"
         },
         {
             "name": "GrainLogs",
-            "description": "GrainLogs"
+            "description": "История изменений по поставкам/отгрузкам"
         },
         {
             "name": "SpareParts",
-            "description": "SpareParts"
+            "description": "Учёт запчастей"
+        },
+        {
+            "name": "Users",
+            "description": "Управление пользователями"
+        },
+        {
+            "name": "Roles",
+            "description": "Справочник ролей"
+        },
+        {
+            "name": "LicenseCategories",
+            "description": "Категории водительских прав"
+        },
+        {
+            "name": "TareMeasurements",
+            "description": "Замеры тары транспортных средств"
+        },
+        {
+            "name": "Vehicles",
+            "description": "Транспорт"
+        },
+        {
+            "name": "Auth",
+            "description": "Авторизация"
         }
     ]
 }

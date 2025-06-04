@@ -1,8 +1,11 @@
-<script setup></script>
+<script setup>
+import { Toaster } from 'vue-sonner'
+</script>
 
 <template>
   <router-view />
-</template>
+  <Toaster position="top-right" />
+</template>  
 
 <style scoped>
 header {
@@ -18,10 +21,10 @@ header {
   header {
     display: flex;
     place-items: center;
-  }
+  }  
 
   .logo {
-    margin: 0 2rem 0 0;
+    margin: 0 2rem 0 0; 
   }
 
   header .wrapper {

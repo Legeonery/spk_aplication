@@ -79,4 +79,5 @@ Route::middleware('jwt.auth')->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update']);
     Route::get('/roles', [RoleController::class, 'index']);
     Route::get('/license-categories', [LicenseCategoryController::class, 'index']);
+    Route::apiResource('grain-types', GrainTypesController::class);
 });

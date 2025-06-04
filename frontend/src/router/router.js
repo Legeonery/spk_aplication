@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Warehouse from '../views/Warehouse.vue'
 import Transport from '../views/Transport.vue'
 import Staff from '../views/Staff.vue'
+import Settings from '../views/Settings.vue'
 import LoginView from '@/views/LoginView.vue'
 import MainLayout from '@/layouts/MainLayout.vue' // 👈 наш layout
 import WarehousePage from '@/views/WarehousePage.vue'
@@ -17,6 +18,7 @@ const routes = [
       { path: 'warehouse', component: Warehouse },
       { path: 'transport', component: Transport },
       { path: 'staff', component: Staff },
+      { path: 'settings', component: Settings },
       { path: 'warehouse/:id', component: WarehousePage },
       {
         path: '/warehouse-spare-parts/:id',
