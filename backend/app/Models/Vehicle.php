@@ -55,4 +55,13 @@ class Vehicle extends Model
     {
         return $this->hasOne(TareMeasurement::class)->latestOfMany();
     }
+    public function repairs()
+    {
+        return $this->hasMany(VehicleRepair::class);
+    }
+
+    public function sparePartRequests()
+    {
+        return $this->hasMany(SparePartRequest::class);
+    }
 }

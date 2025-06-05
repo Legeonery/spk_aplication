@@ -66,6 +66,14 @@ use Illuminate\Http\Request;
  *     description="Транспорт"
  * )
  * @OA\Tag(
+ *     name="SparePartRequests",
+ *     description="заявки ремонтная база"
+ * )
+ * @OA\Tag(
+ *     name="VehicleRepairs",
+ *     description="Транспорт в ремонте"
+ * )
+ * @OA\Tag(
  *     name="Auth",
  *     description="Авторизация"
  * )

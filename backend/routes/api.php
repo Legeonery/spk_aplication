@@ -20,8 +20,12 @@ use App\Http\Controllers\TareMeasurementController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\LicenseCategoryController;
+use App\Http\Controllers\SparePartRequestController;
+use App\Http\Controllers\VehicleRepairController;
+use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -80,4 +84,16 @@ Route::middleware('jwt.auth')->group(function () {
     Route::get('/roles', [RoleController::class, 'index']);
     Route::get('/license-categories', [LicenseCategoryController::class, 'index']);
     Route::apiResource('grain-types', GrainTypesController::class);
+    Route::get('/repairs', [VehicleRepairController::class, 'index']);
+    Route::post('/repairs', [VehicleRepairController::class, 'store']);
+    Route::delete('/repairs/{vehicleRepair}', [VehicleRepairController::class, 'destroy']);
+    Route::get('/spare-requests', [SparePartRequestController::class, 'index']);
+    Route::post('/spare-requests', [SparePartRequestController::class, 'store']);
+    Route::patch('/spare-requests/{sparePartRequest}/status', [SparePartRequestController::class, 'updateStatus']);
+    Route::delete('/spare-requests/{sparePartRequest}', [SparePartRequestController::class, 'destroy']);
+    Route::get('/spare-parts/available', [SparePartController::class, 'available']);
+    Route::get('/my-vehicles', function () {
+        return Vehicle::where('driver_id', Auth::id())->get();
+    });
+    Route::patch('/vehicles/{vehicle}/status', [VehicleController::class, 'updateStatus']);
 });

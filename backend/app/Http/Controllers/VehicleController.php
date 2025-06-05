@@ -81,4 +81,15 @@ class VehicleController extends Controller
 
         return response()->json(['message' => 'Статус обновлён', 'vehicle' => $vehicle]);
     }
+    public function updateStatus(Request $request, Vehicle $vehicle)
+    {
+        $request->validate([
+            'status' => 'required|in:на ходу,на ремонте,не на ходу',
+        ]);
+
+        $vehicle->status = $request->status;
+        $vehicle->save();
+
+        return response()->json($vehicle);
+    }
 }

@@ -765,6 +765,112 @@ use App\Http\Controllers\Controller;
  *         )
  *     )
  * )
+ * @OA\Get(
+ *     path="/api/spare-requests",
+ *     summary="Получить список заявок на запчасти",
+ *     tags={"SparePartRequests"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="status",
+ *         in="query",
+ *         description="Фильтр по статусу (Новая, В работе, Закрыта)",
+ *         required=false,
+ *         @OA\Schema(type="string")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Список заявок"
+ *     )
+ * )
+ * @OA\Post(
+ *     path="/api/spare-requests",
+ *     summary="Создать заявку на запчасть",
+ *     tags={"SparePartRequests"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"spare_part_id","vehicle_id","quantity"},
+ *             @OA\Property(property="spare_part_id", type="integer"),
+ *             @OA\Property(property="vehicle_id", type="integer"),
+ *             @OA\Property(property="quantity", type="number", format="float"),
+ *             @OA\Property(property="note", type="string")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Заявка создана"
+ *     )
+ * )
+ * @OA\Patch(
+ *     path="/api/spare-requests/{id}/status",
+ *     summary="Обновить статус заявки",
+ *     tags={"SparePartRequests"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="ID заявки",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"status"},
+ *             @OA\Property(property="status", type="string", enum={"Новая", "В работе", "Закрыта"})
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Статус обновлён"
+ *     )
+ * )
+ * @OA\Get(
+ *     path="/api/repairs",
+ *     summary="Получить список ТС в ремонте",
+ *     tags={"VehicleRepairs"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Список ремонтов"
+ *     )
+ * )
+ * @OA\Post(
+ *     path="/api/repairs",
+ *     summary="Создать запись о ремонте ТС",
+ *     tags={"VehicleRepairs"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             required={"vehicle_id", "reason"},
+ *             @OA\Property(property="vehicle_id", type="integer"),
+ *             @OA\Property(property="reason", type="string")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=201,
+ *         description="Ремонт создан"
+ *     )
+ * )
+ * @OA\Delete(
+ *     path="/api/repairs/{id}",
+ *     summary="Удалить ремонт",
+ *     tags={"VehicleRepairs"},
+ *     security={{"bearerAuth":{}}},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="ID ремонта",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Удалено"
+ *     )
+ * )
  */
 
 class PostController extends Controller

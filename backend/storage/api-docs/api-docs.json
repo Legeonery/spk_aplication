@@ -2039,6 +2039,224 @@
                     }
                 ]
             }
+        },
+        "/api/spare-requests": {
+            "get": {
+                "tags": [
+                    "SparePartRequests"
+                ],
+                "summary": "Получить список заявок на запчасти",
+                "operationId": "a051435f3ab3302eb3eaec07c4673dbb",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Фильтр по статусу (Новая, В работе, Закрыта)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список заявок"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "SparePartRequests"
+                ],
+                "summary": "Создать заявку на запчасть",
+                "operationId": "06ccfb81dc78c5dbc49224be55c15cbc",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "spare_part_id",
+                                    "vehicle_id",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "spare_part_id": {
+                                        "type": "integer"
+                                    },
+                                    "vehicle_id": {
+                                        "type": "integer"
+                                    },
+                                    "quantity": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "note": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Заявка создана"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/spare-requests/{id}/status": {
+            "patch": {
+                "tags": [
+                    "SparePartRequests"
+                ],
+                "summary": "Обновить статус заявки",
+                "operationId": "e14c9b9e959a2ee39e326dc32d825a60",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID заявки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Новая",
+                                            "В работе",
+                                            "Закрыта"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Статус обновлён"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/repairs": {
+            "get": {
+                "tags": [
+                    "VehicleRepairs"
+                ],
+                "summary": "Получить список ТС в ремонте",
+                "operationId": "0fd432ed5a24ca6d31c1ac0496b84f61",
+                "responses": {
+                    "200": {
+                        "description": "Список ремонтов"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "VehicleRepairs"
+                ],
+                "summary": "Создать запись о ремонте ТС",
+                "operationId": "33ef9e5d545d81e23a3987f03544f026",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "vehicle_id",
+                                    "reason"
+                                ],
+                                "properties": {
+                                    "vehicle_id": {
+                                        "type": "integer"
+                                    },
+                                    "reason": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Ремонт создан"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/repairs/{id}": {
+            "delete": {
+                "tags": [
+                    "VehicleRepairs"
+                ],
+                "summary": "Удалить ремонт",
+                "operationId": "a1383c2f319b377dc2d484f2ab513906",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID ремонта",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Удалено"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -2089,6 +2307,14 @@
         {
             "name": "Vehicles",
             "description": "Транспорт"
+        },
+        {
+            "name": "SparePartRequests",
+            "description": "заявки ремонтная база"
+        },
+        {
+            "name": "VehicleRepairs",
+            "description": "Транспорт в ремонте"
         },
         {
             "name": "Auth",

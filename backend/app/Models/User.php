@@ -49,4 +49,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(Driver::class);
     }
+    public function sparePartRequests()
+    {
+        return $this->hasMany(SparePartRequest::class);
+    }
+
 }

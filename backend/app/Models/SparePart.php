@@ -31,6 +31,14 @@ class SparePart extends Model
     }
     public function sparePart()
     {
-        return $this->belongsTo(\App\Models\SparePart::class);
+        return $this->belongsTo(SparePart::class);
+    }
+    public function requests()
+    {
+        return $this->hasMany(SparePartRequest::class);
+    }
+    public function warehouseQuantities()
+    {
+        return $this->hasMany(WarehouseSparePart::class);
     }
 }
